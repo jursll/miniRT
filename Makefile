@@ -6,7 +6,7 @@
 #    By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/01/05 17:29:03 by julrusse          #+#    #+#              #
-#    Updated: 2025/06/20 13:52:27 by julrusse         ###   ########.fr        #
+#    Updated: 2025/06/20 14:43:15 by julrusse         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,16 +31,7 @@ SRC			= $(shell find $(SRC_DIR) -type f -name '*.c')
 OBJ_DIR		= $(SRC_DIR)/obj
 OBJ			= $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC))
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-	@mkdir -p $(dir $@)
-	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
-
-$(NAME): $(OBJ)
-	@$(CC) $(CFLAGS) $(INCLUDES) $(OBJ) \
-		-L$(LIBFT_DIR) -lft \
-		-L$(MLX_DIR) -lmlx \
-		-lm -lXext -lX11 \
-		-o $(NAME)
+all: $(LIBFT) $(MLX) $(NAME)
 
 $(LIBFT):
 	@$(MAKE) -C $(LIBFT_DIR)
@@ -48,7 +39,16 @@ $(LIBFT):
 $(MLX):
 	@$(MAKE) -C $(MLX_DIR)
 
-all: $(NAME)
+$(NAME): $(OBJ) $(LIBFT) $(MLX)
+	@$(CC) $(CFLAGS) $(INCLUDES) $(OBJ) \
+		-L$(LIBFT_DIR) -lft \
+		-L$(MLX_DIR) -lmlx \
+		-lm -lXext -lX11 \
+		-o $(NAME)
+
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(dir $@)
+	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 clean:
 	@$(RM) $(OBJ_DIR)
