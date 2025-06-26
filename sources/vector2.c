@@ -1,22 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   vector2.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/20 13:32:25 by julrusse          #+#    #+#             */
-/*   Updated: 2025/06/26 09:06:39 by julrusse         ###   ########.fr       */
+/*   Created: 2025/06/26 16:47:58 by julrusse          #+#    #+#             */
+/*   Updated: 2025/06/26 16:57:41 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/miniRT.h"
 
-int main(void)
+t_v3d	sc_mul(t_v3d a, double nb)
 {
-    t_vec a = vec(1, 2, 3);
-    t_vec b = vec(4, -1, 2);
-    t_vec c = vec_add(a, b);
-    printf("c = (%.1f, %.1f, %.1f)\n", c.x, c.y, c.z);
-    return (0);
+	t_v3d	res;
+
+	res.x = a.x * nb;
+	res.y = a.y * nb;
+	res.z = a.z * nb;
+	return (res);
+}
+
+double	vec_dot(t_v3d a, t_v3d b)
+{
+	return (a.x * b.x + a.y * b.y + a.z * b.z);
+}
+
+double	vec_norm(t_v3d a)
+{
+	double	res;
+
+	res = sqrt(pow(a.x, 2.0) + pow(a.y, 2.0) + pow(a.z, 2.0));
+	return (res);
 }
