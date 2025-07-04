@@ -1,26 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   vector2.c                                          :+:      :+:    :+:   */
+/*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/26 16:47:58 by julrusse          #+#    #+#             */
-/*   Updated: 2025/07/04 17:16:24 by julrusse         ###   ########.fr       */
+/*   Created: 2025/07/04 17:07:20 by julrusse          #+#    #+#             */
+/*   Updated: 2025/07/04 17:08:24 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/miniRT.h"
 
-double	vec_dot(t_v3d a, t_v3d b)
+void	free_rt(t_rt *rt)
 {
-	return (a.x * b.x + a.y * b.y + a.z * b.z);
-}
+	/* Free scene objects if allocated */
+	if (rt->scene.spheres)
+		free(rt->scene.spheres);
+	if (rt->scene.planes)
+		free(rt->scene.planes);
+	if (rt->scene.cylinders)
+		free(rt->scene.cylinders);
+	if (rt->scene.lights)
+		free(rt->scene.lights);
 
-double	vec_norm(t_v3d a)
-{
-	double	res;
-
-	res = sqrt(pow(a.x, 2.0) + pow(a.y, 2.0) + pow(a.z, 2.0));
-	return (res);
+	/* Free MLX resources if allocated */
+	if (rt->mlbx)
+	{
+		if (rt->mlbx->img.img)
+			mlx_destroy_image(rt->mlbx->mlx, rt->mlbx->img.img);
+		free(rt->mlbx);
+	}
 }

@@ -5,76 +5,98 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/03 10:59:23 by julrusse          #+#    #+#             */
-/*   Updated: 2025/07/03 11:08:28 by julrusse         ###   ########.fr       */
+/*   Created: 2025/07/04 16:33:35 by julrusse          #+#    #+#             */
+/*   Updated: 2025/07/04 16:33:46 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/miniRT.h"
 
-double	dist(const t_v3d p1, const t_v3d p2)
+/*
+** Calculate ray direction for a pixel
+** This creates a ray from camera through each pixel
+*/
+t_v3d	calculate_ray_direction(t_camera cam, int x, int y)
 {
-	return (sqrt(pow(p2.x - p1.x, 2)
-		+ pow(p2.y - p1.y, 2) + pow(p2.z - p1.z, 2)));
+	double	fov_rad;
+	double	aspect_ratio;
+	double	pixel_x;
+	double	pixel_y;
+	t_v3d	direction;
+
+	// Convert FOV to radians
+	fov_rad = cam.fov * M_PI / 180.0;
+	aspect_ratio = (double)WIN_W / (double)WIN_H;
+
+	// Convert pixel coordinates to normalized device coordinates (-1 to 1)
+	pixel_x = (2.0 * x / WIN_W - 1.0) * aspect_ratio * tan(fov_rad / 2.0);
+	pixel_y = (1.0 - 2.0 * y / WIN_H) * tan(fov_rad / 2.0);
+
+	// For now, assume camera looks along positive Z axis
+	// You'll need to improve this to handle camera orientation
+	direction.x = pixel_x;
+	direction.y = pixel_y;
+	direction.z = 1.0;
+
+	return (normalize_vector(direction));
 }
 
-t_v3d	normalize(t_v3d a)
+/*
+** Trace a single ray and return the color
+*/
+int	trace_ray(t_rt *rt, t_ray ray)
 {
-	double	length;
+	double	t;
+	double	min_t;
+	int		hit_color;
+	int		i;
 
-	length = dist(new_v3d(0, 0, 0), a);
-	return (new_v3d(a.x / length, a.y / length, a.z / length));
+	min_t = INFINITY;
+	hit_color = 0; // Black background
+
+	// Check intersection with all spheres
+	i = 0;
+	while (i < rt->scene.num_spheres)
+	{
+		t = intersect_sphere(ray, rt->scene.spheres[i]);
+		if (t > 0 && t < min_t)
+		{
+			min_t = t;
+			hit_color = rgb_to_int(rt->scene.spheres[i].color);
+		}
+		i++;
+	}
+
+	return (hit_color);
 }
 
-/* creates all of the rays */
+/*
+** Main rendering loop - cast rays for each pixel
+*/
 void	launch_rays(t_rt *rt)
 {
-	double	x;
-	double	y;
+	int		x;
+	int		y;
 	t_ray	ray;
-	t_color	final_color;
+	int		color;
 
-	y = -1;
-	while (++y < WIN_H)
+	y = 0;
+	while (y < WIN_H)
 	{
-		x = -1;
-		while (++x < WIN_W)
+		x = 0;
+		while (x < WIN_W)
 		{
-			ray = make_ray(rt, make_v_dir(rt, x, y));
-			ray.inter = closest_inter(rt, &ray);
-			final_color = get_color(ray.inter);
-			final_color = lights_shadows(rt, rt->sc, ray.inter, final_color);
-			my_mlx_pixel_put(rt->mlbx->img, x, y, rgb_to_int(final_color));
+			// Create ray from camera through pixel
+			ray.origin = rt->scene.camera.position;
+			ray.direction = calculate_ray_direction(rt->scene.camera, x, y);
+
+			// Trace ray and get color
+			color = trace_ray(rt, ray);
+
+			// Put pixel on screen
+			my_mlx_pixel_put(rt->mlbx->img, x, y, color);
+			x++;
 		}
+		y++;
 	}
-}
-
-t_ray	make_ray(t_rt *rt, t_v3d dir)
-{
-	t_ray	ray;
-
-	ray.coord = rt->sc->cam.coord;
-	ray.v_dir = dir;
-	return (ray);
-}
-
-t_v3d	make_v_dir(t_rt *rt, double x, double y)
-{
-	t_v3d	v_dir;
-	double	a;
-	double	b;
-	double	c;
-	int		max;
-
-	a = x + 0.5 - (WIN_W) * 0.5;
-	b = y + 0.5 - (WIN_H) * 0.5;
-	if (WIN_W > WIN_H)
-		max = WIN_W;
-	else
-		max = WIN_H;
-	c = max / (2 * tan((rt->sc->cam.fov * 0.5) * M_PI / 180.0));
-	v_dir.x = 1 * a + 0 * b + 0 * c;
-	v_dir.y = 0 * a + 1 * b + 0 * c;
-	v_dir.z = 0 * a + 0 * b + 1 * c;
-	return (normalize(v_dir));
 }

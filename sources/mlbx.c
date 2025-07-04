@@ -6,7 +6,7 @@
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 17:20:39 by julrusse          #+#    #+#             */
-/*   Updated: 2025/07/03 10:40:12 by julrusse         ###   ########.fr       */
+/*   Updated: 2025/07/04 17:05:23 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ int	display(t_rt *rt)
 }
 
 /* draws a pixel at (x, y) in color */
-void	my_mlx_pixel_put(t_img img, int x, int y, int color)
+void	my_mlx_pixel_put(t_data img, int x, int y, int color)
 {
 	char	*dst;
 
