@@ -1,28 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   vector.c                                           :+:      :+:    :+:   */
+/*   math2.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/26 09:03:48 by julrusse          #+#    #+#             */
-/*   Updated: 2025/07/03 10:37:29 by julrusse         ###   ########.fr       */
+/*   Created: 2025/07/03 12:38:12 by julrusse          #+#    #+#             */
+/*   Updated: 2025/07/03 12:38:36 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/miniRT.h"
 
-t_v3d	vec(double x, double y, double z)
-{
-	t_v3d	v;
-
-	v.x = x;
-	v.y = y;
-	v.z = z;
-	return (v);
-}
-
-t_v3d	vec_add(t_v3d a, t_v3d b)
+/* returns a+b */
+t_v3d	add(t_v3d a, t_v3d b)
 {
 	t_v3d	res;
 
@@ -32,7 +23,8 @@ t_v3d	vec_add(t_v3d a, t_v3d b)
 	return (res);
 }
 
-t_v3d	vec_sub(t_v3d a, t_v3d b)
+/* returns a-b */
+t_v3d	sub(t_v3d a, t_v3d b)
 {
 	t_v3d	res;
 
@@ -42,22 +34,32 @@ t_v3d	vec_sub(t_v3d a, t_v3d b)
 	return (res);
 }
 
-t_v3d	vec_mult(t_v3d a, t_v3d b)
+t_v3d	new_v3d(double x, double y, double z)
+{
+	t_v3d	new;
+
+	new.x = x;
+	new.y = y;
+	new.z = z;
+	return (new);
+}
+
+/* multiplication by a scalar */
+t_v3d	sc_mult(t_v3d a, double nb)
 {
 	t_v3d	res;
 
-	res.x = a.x * b.x;
-	res.y = a.y * b.y;
-	res.z = a.z * b.z;
+	res.x = a.x * nb;
+	res.y = a.y * nb;
+	res.z = a.z * nb;
 	return (res);
 }
 
-t_v3d	vec_cross(t_v3d a, t_v3d b)
+/* returns ||a|| */
+double	norme(t_v3d a)
 {
-	t_v3d	res;
+	double	res;
 
-	res.x = a.y * b.z - a.z * b.y;
-	res.y = a.z * b.x - a.x * b.z;
-	res.z = a.x * b.y - a.y * b.x;
+	res = sqrt(pow(a.x, 2.0) + pow(a.y, 2.0) + pow(a.z, 2.0));
 	return (res);
 }

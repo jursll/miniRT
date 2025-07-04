@@ -6,13 +6,13 @@
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 16:47:58 by julrusse          #+#    #+#             */
-/*   Updated: 2025/06/26 16:57:41 by julrusse         ###   ########.fr       */
+/*   Updated: 2025/07/03 11:10:26 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/miniRT.h"
 
-t_v3d	sc_mul(t_v3d a, double nb)
+t_v3d	sc_mult(t_v3d a, double nb)
 {
 	t_v3d	res;
 
