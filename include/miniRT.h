@@ -6,7 +6,7 @@
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 13:28:02 by julrusse          #+#    #+#             */
-/*   Updated: 2025/07/04 17:16:36 by julrusse         ###   ########.fr       */
+/*   Updated: 2025/07/17 15:26:29 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,16 @@ typedef struct s_ray
 	t_v3d	origin;
 	t_v3d	direction;
 }	t_ray;
+
+/* Structure to store hit information */
+typedef struct s_hit
+{
+	double	t;              // Distance to hit point
+	t_v3d	point;          // Where ray hit
+	t_v3d	normal;         // Surface normal at hit point
+	t_color	color;          // Object color
+	int		hit_anything;   // Did we hit something?
+}	t_hit;
 
 // -------- CAMERA -------- //
 
@@ -179,11 +189,33 @@ t_v3d	calculate_ray_direction(t_camera cam, int x, int y);
 int		trace_ray(t_rt *rt, t_ray ray);
 void	launch_rays(t_rt *rt);
 
-// -------- raytracing.c -------- //
+// -------- raytracing_with_lights.c -------- //
+t_v3d	ray_at(t_ray ray, double t);
+t_v3d	get_sphere_normal(t_v3d hit_point, t_sphere sphere);
+void	check_sphere_hit(t_ray ray, t_sphere sphere, t_hit *hit);
+void	check_plane_hit(t_ray ray, t_plane plane, t_hit *hit);
+t_color	calculate_lighting(t_rt *rt, t_hit *hit);
+int		trace_ray_with_lighting(t_rt *rt, t_ray ray);
+
+// -------- sphere.c -------- //
 double	intersect_sphere(t_ray ray, t_sphere sphere);
 
+// -------- plane.c -------- //
+double	intersect_plane(t_ray ray, t_plane plane);
+
+// -------- lighting.c -------- //
+t_v3d	sphere_normal(t_v3d point, t_sphere sphere);
+t_v3d	plane_normal(t_plane plane);
+t_color	apply_ambient(t_color object_color, t_ambient ambient);
+t_color	calculate_diffuse(t_color object_color, t_v3d normal,
+			t_v3d light_dir, double intensity);
+t_color	add_colors(t_color c1, t_color c2);
+
+// -------- shadows.c -------- //
+int	is_in_shadow(t_rt *rt, t_v3d point, t_v3d light_pos);
+
 // -------- main.c -------- //
-void	create_test_scene(t_rt *rt);
+void	create_lit_scene(t_rt *rt);
 void	free_rt(t_rt *rt);
 
 
