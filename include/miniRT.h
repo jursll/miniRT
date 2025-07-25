@@ -6,7 +6,7 @@
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 13:28:02 by julrusse          #+#    #+#             */
-/*   Updated: 2025/07/17 15:26:29 by julrusse         ###   ########.fr       */
+/*   Updated: 2025/07/25 13:36:52 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,25 @@
 # define WIN_W 800
 # define WIN_H 600
 
+#  define KEY_ESC	65307
+#  define KEY_W		119
+#  define KEY_S		115
+#  define KEY_A		97
+#  define KEY_D		100
+#  define KEY_Q		113
+#  define KEY_E		101
+#  define KEY_LEFT	65361
+#  define KEY_RIGHT	65363
+#  define KEY_UP	65362
+#  define KEY_DOWN	65364
+#  define KEY_PLUS	61 // change to P
+#  define KEY_MINUS	45 // change to M
+
 # ifndef M_PI
 #  define M_PI 3.14159265358979323846
 # endif
 
 // -------- PLAN & COLORS -------- //
-
 typedef struct s_v3d
 {
 	double	x;
@@ -45,7 +58,6 @@ typedef struct s_color
 }	t_color;
 
 // -------- RAY -------- //
-
 typedef struct s_ray
 {
 	t_v3d	origin;
@@ -63,7 +75,6 @@ typedef struct s_hit
 }	t_hit;
 
 // -------- CAMERA -------- //
-
 typedef struct s_camera
 {
 	t_v3d	position;      /* Camera position in 3D space */
@@ -113,17 +124,17 @@ typedef struct s_cylinder
 // -------- SCENE -------- //
 typedef struct s_scene
 {
-    t_ambient   ambient;
-    t_camera    camera;
-    t_light     *lights;       /* Array of lights */
-    int         num_lights;
-    t_sphere    *spheres;      /* Array of spheres */
-    int         num_spheres;
-    t_plane     *planes;       /* Array of planes */
-    int         num_planes;
-    t_cylinder  *cylinders;    /* Array of cylinders */
-    int         num_cylinders;
-}   t_scene;
+	t_ambient	ambient;
+	t_camera	camera;
+	t_light		*lights;       /* Array of lights */
+	int			num_lights;
+	t_sphere	*spheres;      /* Array of spheres */
+	int			num_spheres;
+	t_plane		*planes;       /* Array of planes */
+	int			num_planes;
+	t_cylinder	*cylinders;    /* Array of cylinders */
+	int			num_cylinders;
+}	t_scene;
 
 // -------- MLX -------- //
 typedef struct s_data
@@ -186,7 +197,7 @@ t_ray	create_ray(t_v3d origin, t_v3d direction);
 
 // -------- raytracing.c -------- //
 t_v3d	calculate_ray_direction(t_camera cam, int x, int y);
-int		trace_ray(t_rt *rt, t_ray ray);
+//	int		trace_ray(t_rt *rt, t_ray ray);  --> replaced by raytacing with lights
 void	launch_rays(t_rt *rt);
 
 // -------- raytracing_with_lights.c -------- //
@@ -194,6 +205,7 @@ t_v3d	ray_at(t_ray ray, double t);
 t_v3d	get_sphere_normal(t_v3d hit_point, t_sphere sphere);
 void	check_sphere_hit(t_ray ray, t_sphere sphere, t_hit *hit);
 void	check_plane_hit(t_ray ray, t_plane plane, t_hit *hit);
+void	check_cylinder_hit(t_ray ray, t_cylinder cylinder, t_hit *hit);
 t_color	calculate_lighting(t_rt *rt, t_hit *hit);
 int		trace_ray_with_lighting(t_rt *rt, t_ray ray);
 
@@ -202,6 +214,13 @@ double	intersect_sphere(t_ray ray, t_sphere sphere);
 
 // -------- plane.c -------- //
 double	intersect_plane(t_ray ray, t_plane plane);
+
+// -------- cylinder.c -------- //
+int		within_height(t_v3d point, t_cylinder cyl);
+double	intersect_infinite_cylinder(t_ray ray, t_cylinder cyl);
+double	intersect_cap(t_ray ray, t_v3d cap_center, t_v3d normal, double radius);
+double	intersect_cylinder(t_ray ray, t_cylinder cyl);
+t_v3d	get_cylinder_normal(t_v3d point, t_cylinder cyl);
 
 // -------- lighting.c -------- //
 t_v3d	sphere_normal(t_v3d point, t_sphere sphere);
@@ -212,55 +231,18 @@ t_color	calculate_diffuse(t_color object_color, t_v3d normal,
 t_color	add_colors(t_color c1, t_color c2);
 
 // -------- shadows.c -------- //
-int	is_in_shadow(t_rt *rt, t_v3d point, t_v3d light_pos);
+int		is_in_shadow(t_rt *rt, t_v3d point, t_v3d light_pos);
+
+// -------- controls.c -------- //
+t_v3d	rotate_y(t_v3d v, double angle);
+t_v3d	rotate_x(t_v3d v, double angle);
+void	move_camera_forward(t_camera *cam, double distance);
+void	move_camera_sideway(t_camera *cam, double distance);
+void	rotate_camera(t_camera *cam, double yaw, double pitch);
+int		handle_key(int keycode, t_rt *rt);
 
 // -------- main.c -------- //
 void	create_lit_scene(t_rt *rt);
 void	free_rt(t_rt *rt);
-
-
-/*
-// -------- raytracing.c -------- //
-double	dist(const t_v3d p1, const t_v3d p2);
-t_v3d	normalize(t_v3d a);
-void	launch_rays(t_rt *rt);
-t_ray	make_ray(t_rt *rt, t_v3d dir);
-t_v3d	make_v_dir(t_rt *rt, double x, double y);
-
-// -------- light.c -------- //
-int		is_closest(t_inter *closest, t_inter *temp);
-void	inter_space(t_ray *ray, t_objects *objects, t_inter **intersection);
-void	saving_space(double *max_distance, t_inter	**closest_intersection,
-			t_inter	*intersection, bool *is_in_shadow);
-t_color	lights_shadows(t_rt *rt, t_scene *sc, t_inter *inter, t_color color);
-
-// -------- colors.c -------- //
-t_color	int_to_rgb(const int r, const int g, const int b);
-t_color	get_color(t_inter *inter);
-t_color	ambiance_color(t_color color, t_ambiant amb);
-t_color	shadow_color(t_color color, double shadow_intensity);
-t_color	diffuse_color(t_inter *inter, t_light *light, t_color color);
-
-// -------- intersections.c -------- //
-t_inter	*closest_inter(t_rt *rt, t_ray *ray);
-int		is_closest(t_inter *closest, t_inter *temp);
-t_inter	*intersect_plane(t_ray *ray, t_plane *plane);
-t_inter	*intersect_sphere(t_ray *ray, t_sphere *sphere);
-t_inter	*intersect_cylinder(t_ray *ray, t_cylinder *cylinder);
-int		quad_cylinder(t_ray *ray, t_inter *inter, t_cylinder *cylinder, t_v3d X);
-bool	is_intersection_valid(t_ray *ray, t_cylinder *cy, double t, double h);
-t_v3d	cylinder_normal(t_v3d P, t_cylinder *cylinder);
-
-// -------- utils.c -------- //
-t_inter	*calloc_utils(void);
-void	print_v3d(t_v3d vect);
-void	print_inter(t_inter *inter);
-int		print_error(char *error_message);
-void	free_objects(t_rt *rt);
-void	free_inter(t_inter *inter);
-void	free_tab(char **tab);
-void	free_scene(t_scene *scene);
-void	free_rt(t_rt *rt);
-*/
 
 #endif

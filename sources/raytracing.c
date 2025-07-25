@@ -6,7 +6,7 @@
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 16:33:35 by julrusse          #+#    #+#             */
-/*   Updated: 2025/07/17 15:23:31 by julrusse         ###   ########.fr       */
+/*   Updated: 2025/07/25 11:35:20 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,20 +23,34 @@ t_v3d	calculate_ray_direction(t_camera cam, int x, int y)
 	double	pixel_x;
 	double	pixel_y;
 	t_v3d	direction;
+	t_v3d	world_up;
+	t_v3d	cam_right;
+	t_v3d	cam_up;
 
 	// Convert FOV to radians
 	fov_rad = cam.fov * M_PI / 180.0;
 	aspect_ratio = (double)WIN_W / (double)WIN_H;
 
-	// Convert pixel coordinates to normalized device coordinates (-1 to 1)
+	// Convert pixel to camera space coordinates
 	pixel_x = (2.0 * x / WIN_W - 1.0) * aspect_ratio * tan(fov_rad / 2.0);
 	pixel_y = (1.0 - 2.0 * y / WIN_H) * tan(fov_rad / 2.0);
 
-	// For now, assume camera looks along positive Z axis
-	// You'll need to improve this to handle camera orientation
-	direction.x = pixel_x;
-	direction.y = pixel_y;
-	direction.z = 1.0;
+	// Build camera coordinate system
+	world_up = vec(0, 1, 0);
+
+	// Right = forward × up
+	cam_right = vec_cross(cam.orientation, world_up);
+	cam_right = normalize_vector(cam_right);
+
+	// Up = right × forward
+	cam_up = vec_cross(cam_right, cam.orientation);
+	cam_up = normalize_vector(cam_up);
+
+	// Build ray direction:
+	// forward + pixel_x * right + pixel_y * up
+	direction = cam.orientation;
+	direction = vec_add(direction, sc_mult(cam_right, pixel_x));
+	direction = vec_add(direction, sc_mult(cam_up, pixel_y));
 
 	return (normalize_vector(direction));
 }

@@ -6,7 +6,7 @@
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:13:45 by julrusse          #+#    #+#             */
-/*   Updated: 2025/07/17 15:15:05 by julrusse         ###   ########.fr       */
+/*   Updated: 2025/07/25 10:34:50 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,22 @@ void	check_plane_hit(t_ray ray, t_plane plane, t_hit *hit)
 	}
 }
 
+/* Check cylinder intersection and fill hit info */
+void	check_cylinder_hit(t_ray ray, t_cylinder cylinder, t_hit *hit)
+{
+	double	t;
+
+	t = intersect_cylinder(ray, cylinder);
+	if (t > 0 && t < hit->t)
+	{
+		hit->t = t;
+		hit->point = ray_at(ray, t);
+		hit->normal = get_cylinder_normal(hit->point, cylinder);
+		hit->color = cylinder.color;
+		hit->hit_anything = 1;
+	}
+}
+
 /* Calculate lighting at a point */
 t_color	calculate_lighting(t_rt *rt, t_hit *hit)
 {
@@ -83,11 +99,11 @@ t_color	calculate_lighting(t_rt *rt, t_hit *hit)
 
 		/* Calculate diffuse lighting (dot product!) */
 		intensity = vec_dot(hit->normal, light_dir);
-		if (intensity > 0)
+		if (intensity > 0 && !is_in_shadow(rt, hit->point, rt->scene.lights[i].position))
 		{
 			intensity *= rt->scene.lights[i].brightness;
 			diffuse = calculate_diffuse(hit->color, hit->normal,
-			                           light_dir, intensity);
+					light_dir, intensity);
 			final_color = add_colors(final_color, diffuse);
 		}
 		i++;
@@ -119,6 +135,14 @@ int	trace_ray_with_lighting(t_rt *rt, t_ray ray)
 	while (i < rt->scene.num_planes)
 	{
 		check_plane_hit(ray, rt->scene.planes[i], &hit);
+		i++;
+	}
+
+	/* Check all cylinders */
+	i = 0;
+	while (i < rt->scene.num_cylinders)
+	{
+		check_cylinder_hit(ray, rt->scene.cylinders[i], &hit);
 		i++;
 	}
 
