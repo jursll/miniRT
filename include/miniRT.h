@@ -6,7 +6,7 @@
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 13:28:02 by julrusse          #+#    #+#             */
-/*   Updated: 2025/07/25 13:36:52 by julrusse         ###   ########.fr       */
+/*   Updated: 2025/07/25 14:33:03 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,8 @@
 #  define KEY_RIGHT	65363
 #  define KEY_UP	65362
 #  define KEY_DOWN	65364
-#  define KEY_PLUS	61 // change to P
-#  define KEY_MINUS	45 // change to M
+#  define KEY_P		112
+#  define KEY_M		109
 
 # ifndef M_PI
 #  define M_PI 3.14159265358979323846

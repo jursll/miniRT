@@ -6,7 +6,7 @@
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 10:35:22 by julrusse          #+#    #+#             */
-/*   Updated: 2025/07/25 11:16:41 by julrusse         ###   ########.fr       */
+/*   Updated: 2025/07/25 15:31:28 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,13 +107,13 @@ int	handle_key(int keycode, t_rt *rt)
 	else if (keycode == KEY_RIGHT)
 		rotate_camera(&rt->scene.camera, -rotate_speed, 0);
 	else if (keycode == KEY_UP)
-		rotate_camera(&rt->scene.camera, 0, rotate_speed);
-	else if (keycode == KEY_DOWN)
 		rotate_camera(&rt->scene.camera, 0, -rotate_speed);
+	else if (keycode == KEY_DOWN)
+		rotate_camera(&rt->scene.camera, 0, rotate_speed);
 	/* Zoom (FOV change) */
-	else if (keycode == KEY_PLUS && rt->scene.camera.fov > 10)
+	else if (keycode == KEY_P && rt->scene.camera.fov > 10)
 		rt->scene.camera.fov -= 5;
-	else if (keycode == KEY_MINUS && rt->scene.camera.fov < 170)
+	else if (keycode == KEY_M && rt->scene.camera.fov < 170)
 		rt->scene.camera.fov += 5;
 	else
 		return (0);

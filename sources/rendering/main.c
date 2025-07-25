@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jjakupi <marvin@42lausanne.ch>             +#+  +:+       +#+        */
+/*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 13:32:25 by julrusse          #+#    #+#             */
-/*   Updated: 2025/07/25 14:04:18 by jjakupi          ###   ########.fr       */
+/*   Updated: 2025/07/25 14:23:50 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,19 +29,19 @@ void	free_rt(t_rt *rt)
 
 int main(int argc, char **argv)
 {
-    t_rt            rt     = {0};
-    t_parsed_scene  ps     = {0};
-    int             fd;
+	t_rt			rt = {0};
+	t_parsed_scene	ps = {0};
+	int				fd;
 
-    if (argc != 2)
-    {
-        printf("Usage: %s <scene_file.rt>\n", argv[0]);
-        return (1);
-    }
-    fd = open_and_init(argc, argv, &ps);
-    parse_scene_file(fd, &ps);
-    validate_scene(&ps);
-    rt.scene = build_runtime_scene(&ps);
-    make_window(&rt);
-    return (0);
+	if (argc != 2)
+	{
+		printf("Usage: %s <scene_file.rt>\n", argv[0]);
+		return (1);
+	}
+	fd = open_and_init(argc, argv, &ps);
+	parse_scene_file(fd, &ps);
+	validate_scene(&ps);
+	rt.scene = build_runtime_scene(&ps);
+	make_window(&rt);
+	return (0);
 }
