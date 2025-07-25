@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
+/*   By: jjakupi <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 13:32:25 by julrusse          #+#    #+#             */
-/*   Updated: 2025/07/17 15:19:25 by julrusse         ###   ########.fr       */
+/*   Updated: 2025/07/25 14:04:18 by jjakupi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/miniRT.h"
+#include "../include/parsing.h"
 
-/* Simple free function */
 void	free_rt(t_rt *rt)
 {
 	if (rt->scene.spheres)
@@ -27,35 +27,21 @@ void	free_rt(t_rt *rt)
 		free(rt->mlbx);
 }
 
-int	main(void)
+int main(int argc, char **argv)
 {
-	t_rt	rt;
+    t_rt            rt     = {0};
+    t_parsed_scene  ps     = {0};
+    int             fd;
 
-	// Create test scene
-	create_lit_scene(&rt);
-
-	// Open window and render
-	make_window(&rt);
-
-	return (0);
+    if (argc != 2)
+    {
+        printf("Usage: %s <scene_file.rt>\n", argv[0]);
+        return (1);
+    }
+    fd = open_and_init(argc, argv, &ps);
+    parse_scene_file(fd, &ps);
+    validate_scene(&ps);
+    rt.scene = build_runtime_scene(&ps);
+    make_window(&rt);
+    return (0);
 }
-
-/*
-int	main(int argc, char **argv)
-{
-	t_rt	*rt;
-
-	(void) argv;
-	rt = ft_calloc(sizeof(t_rt), 1);
-	if (argc == 2)
-	{
-		file_parsing(argv[1], rt);
-		make_window(rt);
-	}
-	else
-	{
-		ft_putstr_fd("\033[31m2 Usage:\n\033[0m", 2);
-		ft_putstr_fd("\033[31m./miniRT [scene_path]\n\033[0m", 2);
-	}
-}
-*/
