@@ -6,62 +6,107 @@
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 10:35:22 by julrusse          #+#    #+#             */
-/*   Updated: 2025/07/25 15:31:28 by julrusse         ###   ########.fr       */
+/*   Updated: 2025/07/31 10:50:14 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/miniRT.h"
 
-/* Rotate vector around Y axis (horizontal rotation) */
-t_v3d	rotate_y(t_v3d v, double angle)
+/* Cycle through objects */
+void	select_next_object(t_rt *rt)
 {
-	t_v3d	result;
-	double	cos_a = cos(angle);
-	double	sin_a = sin(angle);
+	int	total_objects;
 
-	result.x = v.x * cos_a + v.z * sin_a;
-	result.y = v.y;
-	result.z = -v.x * sin_a + v.z * cos_a;
-	return (result);
+	total_objects = get_total_objects(rt);
+	rt->selection_index = (rt->selection_index + 1) % total_objects;
+	rt->current_selection = get_selection_at_index(rt, rt->selection_index);
 }
 
-/* Rotate vector around X axis (vertical rotation) */
-t_v3d	rotate_x(t_v3d v, double angle)
+void	select_previous_object(t_rt *rt)
 {
-	t_v3d	result;
-	double	cos_a = cos(angle);
-	double	sin_a = sin(angle);
+	int	total_objects;
 
-	result.x = v.x;
-	result.y = v.y * cos_a - v.z * sin_a;
-	result.z = v.y * sin_a + v.z * cos_a;
-	return (result);
+	total_objects = get_total_objects(rt);
+	rt->selection_index = (rt->selection_index - 1 + total_objects) % total_objects;
+	rt->current_selection = get_selection_at_index(rt, rt->selection_index);
 }
 
-/* Move camera forward/backward along view direction */
-void	move_camera_forward(t_camera *cam, double distance)
+/* Enhanced handle_key function */
+int	handle_key(int keycode, t_rt *rt)
 {
-	t_v3d	movement;
+	const double	move_speed = 1.0;
+	const double	rotate_speed = 0.1;
+	t_v3d			movement;
 
-	movement = sc_mult(cam->orientation, distance);
-	cam->position = vec_add(cam->position, movement);
-}
+	if (keycode == KEY_ESC)
+		destroy(rt);
 
-/* Move camera left/right */
-void	move_camera_sideway(t_camera *cam, double distance)
-{
-	t_v3d	right;
-	t_v3d	world_up;
-	t_v3d	movement;
+	/* Selection controls */
+	else if (keycode == KEY_TAB)
+	{
+		/* Check if shift is pressed (you might need to handle this differently) */
+		select_next_object(rt);
+	}
 
-	world_up = vec(0, 1, 0);
+	/* Movement controls - now work on selected object */
+	else if (keycode == KEY_W)  /* Forward/+Z */
+	{
+		movement = vec(0, 0, move_speed);
+		move_selected_object(rt, movement);
+	}
+	else if (keycode == KEY_S)  /* Backward/-Z */
+	{
+		movement = vec(0, 0, -move_speed);
+		move_selected_object(rt, movement);
+	}
+	else if (keycode == KEY_A)  /* Left/-X */
+	{
+		movement = vec(-move_speed, 0, 0);
+		move_selected_object(rt, movement);
+	}
+	else if (keycode == KEY_D)  /* Right/+X */
+	{
+		movement = vec(move_speed, 0, 0);
+		move_selected_object(rt, movement);
+	}
+	else if (keycode == KEY_Q)  /* Up/+Y */
+	{
+		movement = vec(0, move_speed, 0);
+		move_selected_object(rt, movement);
+	}
+	else if (keycode == KEY_E)  /* Down/-Y */
+	{
+		movement = vec(0, -move_speed, 0);
+		move_selected_object(rt, movement);
+	}
 
-	/* Calculate right vector (cross product of forward and up) */
-	right = vec_cross(cam->orientation, world_up);
-	right = normalize_vector(right);
+	/* Rotation controls - only for objects that can rotate */
+	else if (keycode == KEY_LEFT)
+		rotate_selected_object(rt, -rotate_speed, 0);
+	else if (keycode == KEY_RIGHT)
+		rotate_selected_object(rt, rotate_speed, 0);
+	else if (keycode == KEY_UP)
+		rotate_selected_object(rt, 0, -rotate_speed);
+	else if (keycode == KEY_DOWN)
+		rotate_selected_object(rt, 0, rotate_speed);
 
-	movement = sc_mult(right, distance);
-	cam->position = vec_add(cam->position, movement);
+	/* FOV controls - only work when camera is selected */
+	else if (keycode == KEY_P && rt->current_selection.type == SEL_CAMERA)
+	{
+		if (rt->scene.camera.fov > 10)
+			rt->scene.camera.fov -= 5;
+	}
+	else if (keycode == KEY_M && rt->current_selection.type == SEL_CAMERA)
+	{
+		if (rt->scene.camera.fov < 170)
+			rt->scene.camera.fov += 5;
+	}
+	else
+		return (0);
+
+	/* Re-render the scene */
+	display(rt);
+	return (0);
 }
 
 /* Rotate camera view */
@@ -80,103 +125,35 @@ void	rotate_camera(t_camera *cam, double yaw, double pitch)
 	cam->orientation = normalize_vector(cam->orientation);
 }
 
-/* Handle keyboard input */
-int	handle_key(int keycode, t_rt *rt)
+/* Special camera movement for when camera is selected */
+void	move_camera_special(t_camera *cam, t_v3d movement)
 {
-	const double move_speed = 1.0;
-	const double rotate_speed = 0.1;
+	t_v3d	world_up;
+	t_v3d	cam_right;
+//	t_v3d	cam_up;
+	t_v3d	final_movement;
 
-	if (keycode == KEY_ESC)
-		destroy(rt);
-	/* Movement */
-	else if (keycode == KEY_W)  /* Forward */
-		move_camera_forward(&rt->scene.camera, move_speed);
-	else if (keycode == KEY_S)  /* Backward */
-		move_camera_forward(&rt->scene.camera, -move_speed);
-	else if (keycode == KEY_A)  /* Left */
-		move_camera_sideway(&rt->scene.camera, -move_speed);
-	else if (keycode == KEY_D)  /* Right */
-		move_camera_sideway(&rt->scene.camera, move_speed);
-	else if (keycode == KEY_Q)  /* Up */
-		rt->scene.camera.position.y += move_speed;
-	else if (keycode == KEY_E)  /* Down */
-		rt->scene.camera.position.y -= move_speed;
-	/* Rotation */
-	else if (keycode == KEY_LEFT)
-		rotate_camera(&rt->scene.camera, rotate_speed, 0);
-	else if (keycode == KEY_RIGHT)
-		rotate_camera(&rt->scene.camera, -rotate_speed, 0);
-	else if (keycode == KEY_UP)
-		rotate_camera(&rt->scene.camera, 0, -rotate_speed);
-	else if (keycode == KEY_DOWN)
-		rotate_camera(&rt->scene.camera, 0, rotate_speed);
-	/* Zoom (FOV change) */
-	else if (keycode == KEY_P && rt->scene.camera.fov > 10)
-		rt->scene.camera.fov -= 5;
-	else if (keycode == KEY_M && rt->scene.camera.fov < 170)
-		rt->scene.camera.fov += 5;
-	else
-		return (0);
-
-	/* Re-render the scene */
-	display(rt);
-	return (0);
-}
-/*
-// Mouse drag for smoother rotation (optional)
-typedef struct s_mouse
-{
-	int		pressed;
-	int		last_x;
-	int		last_y;
-}	t_mouse;
-
-int	mouse_press(int button, int x, int y, t_rt *rt)
-{
-	static t_mouse mouse;
-
-	if (button == 1)  // Left click
+	/* If moving along view axis (W/S), use orientation */
+	if (movement.z != 0)
 	{
-		mouse.pressed = 1;
-		mouse.last_x = x;
-		mouse.last_y = y;
-		rt->mlbx->mlx_win = (void *)&mouse;  // Store mouse state
+		final_movement = sc_mult(cam->orientation, movement.z);
+		cam->position = vec_add(cam->position, final_movement);
+		return;
 	}
-	return (0);
+
+	/* For left/right movement, calculate camera right vector */
+	if (movement.x != 0)
+	{
+		world_up = vec(0, 1, 0);
+		cam_right = vec_cross(world_up, cam->orientation);
+		cam_right = normalize_vector(cam_right);
+		final_movement = sc_mult(cam_right, movement.x);
+		cam->position = vec_add(cam->position, final_movement);
+	}
+
+	/* For up/down, just use Y axis */
+	if (movement.y != 0)
+	{
+		cam->position.y += movement.y;
+	}
 }
-
-int	mouse_release(int button, int x, int y, t_rt *rt)
-{
-	static t_mouse *mouse;
-
-	(void)x;
-	(void)y;
-	mouse = (t_mouse *)rt->mlbx->mlx_win;
-	if (button == 1 && mouse)
-		mouse->pressed = 0;
-	return (0);
-}
-
-int	mouse_move(int x, int y, t_rt *rt)
-{
-	static t_mouse *mouse;
-	double	dx, dy;
-
-	mouse = (t_mouse *)rt->mlbx->mlx_win;
-	if (!mouse || !mouse->pressed)
-		return (0);
-
-	// Calculate mouse movement
-	dx = (x - mouse->last_x) * 0.005;
-	dy = (y - mouse->last_y) * 0.005;
-
-	// Rotate camera based on mouse movement
-	rotate_camera(&rt->scene.camera, -dx, -dy);
-
-	mouse->last_x = x;
-	mouse->last_y = y;
-
-	display(rt);
-	return (0);
-}
-*/

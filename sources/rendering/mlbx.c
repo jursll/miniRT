@@ -6,7 +6,7 @@
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 17:20:39 by julrusse          #+#    #+#             */
-/*   Updated: 2025/07/25 11:22:38 by julrusse         ###   ########.fr       */
+/*   Updated: 2025/07/31 10:47:08 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,12 +53,25 @@ int	destroy(t_rt *rt)
 	return (0);
 }
 
-/* updates the displayed image */
+/* Updates the displayed image */
 int	display(t_rt *rt)
 {
+	char	info_str[256];
+
+	/* Render the scene */
 	launch_rays(rt);
+
+	/* Draw selection info on the image */
+	draw_selection_info(rt);
+
+	/* Display the image */
 	mlx_put_image_to_window(rt->mlbx->mlx, rt->mlbx->mlx_win,
 		rt->mlbx->img.img, 0, 0);
+
+	/* Draw text info over the image */
+	get_object_info(rt, info_str);
+	mlx_string_put(rt->mlbx->mlx, rt->mlbx->mlx_win, 15, 25, 0xFFFFFF, info_str);
+
 	return (0);
 }
 
