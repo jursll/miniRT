@@ -6,7 +6,7 @@
 /*   By: jjakupi <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 14:21:01 by jjakupi           #+#    #+#             */
-/*   Updated: 2025/07/25 11:05:58 by jjakupi          ###   ########.fr       */
+/*   Updated: 2025/07/25 15:37:15 by jjakupi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,4 +47,3 @@ int	print_error(char *error_message)
 	printf("\033[31mError\n%s\033[30m\n", error_message);
 	exit (EXIT_FAILURE);
 }
-

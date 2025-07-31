@@ -6,88 +6,86 @@
 /*   By: jjakupi <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 10:34:37 by jjakupi           #+#    #+#             */
-/*   Updated: 2025/07/25 11:35:08 by jjakupi          ###   ########.fr       */
+/*   Updated: 2025/07/25 16:21:23 by jjakupi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/miniRT.h"
 #include "../../include/parsing.h"
 
-t_scene build_runtime_scene(const t_parsed_scene *p)
+static void	init_lights(t_scene *dst, const t_parsed_scene *p)
 {
-    t_scene          dst = {0};
-    int              count;
-    t_parsed_object *o;
+	int	n;
 
-    /* 1) Ambient */
-    dst.ambient.ratio = p->ambient.ratio;
-    dst.ambient.color = p->ambient.color;            // direct
+	n = p->has_light;
+	dst->num_lights = n;
+	if (!n)
+		return ;
+	dst->lights = malloc(sizeof * dst->lights * n);
+	if (!dst->lights)
+		print_error("Could not allocate lights");
+	dst->lights[0].position = p->light.coord;
+	dst->lights[0].brightness = p->light.ratio;
+	dst->lights[0].color = p->light.color;
+}
 
-    /* 2) Camera */
-    dst.camera.position    = p->cam.coord;           // direct
-    dst.camera.orientation = p->cam.ori;             // direct
-    dst.camera.fov         = p->cam.fov;
+static int	count_spheres(const t_parsed_scene *p)
+{
+	int				count;
+	t_parsed_object	*o;
 
-    /* 3) Lights */
-    dst.num_lights = p->has_light ? 1 : 0;
-    if (dst.num_lights)
-    {
-        dst.lights = malloc(sizeof *dst.lights * dst.num_lights);
-        if (!dst.lights) print_error("Could not allocate lights");
-        dst.lights[0].position   = p->light.coord;   // direct
-        dst.lights[0].brightness = p->light.ratio;
-        dst.lights[0].color      = p->light.color;   // direct
-    }
+	count = 0;
+	o = p->obj;
+	while (o)
+	{
+		if (o->type == SPHERE)
+			count++;
+		o = o->next;
+	}
+	return (count);
+}
 
-    /* 4) Spheres */
-    count = 0;
-    for (o = p->obj; o; o = o->next) if (o->type == SPHERE) count++;
-    dst.num_spheres = count;
-    dst.spheres     = malloc(sizeof *dst.spheres * count);
-    if (count && !dst.spheres) print_error("Could not allocate spheres");
-    count = 0;
-    for (o = p->obj; o; o = o->next)
-        if (o->type == SPHERE)
-        {
-            dst.spheres[count].center   = o->fig.sp.coord;  // direct
-            dst.spheres[count].diameter = o->fig.sp.r * 2.0;
-            dst.spheres[count].color    = o->fig.sp.color;  // direct
-            count++;
-        }
+static void	fill_spheres(t_scene *dst, const t_parsed_scene *p)
+{
+	int				i;
+	t_parsed_object	*o;
 
-    /* 5) Planes */
-    count = 0;
-    for (o = p->obj; o; o = o->next) if (o->type == PLANE) count++;
-    dst.num_planes = count;
-    dst.planes     = malloc(sizeof *dst.planes * count);
-    if (count && !dst.planes) print_error("Could not allocate planes");
-    count = 0;
-    for (o = p->obj; o; o = o->next)
-        if (o->type == PLANE)
-        {
-            dst.planes[count].point  = o->fig.pl.coord;   // direct
-            dst.planes[count].normal = o->fig.pl.ori;     // direct
-            dst.planes[count].color  = o->fig.pl.color;   // direct
-            count++;
-        }
+	i = 0;
+	o = p->obj;
+	while (o)
+	{
+		if (o->type == SPHERE)
+		{
+			dst->spheres[i].center = o->fig.sp.coord;
+			dst->spheres[i].diameter = o->fig.sp.r * 2.0;
+			dst->spheres[i].color = o->fig.sp.color;
+			i++;
+		}
+		o = o->next;
+	}
+}
 
-    /* 6) Cylinders */
-    count = 0;
-    for (o = p->obj; o; o = o->next) if (o->type == CYLINDER) count++;
-    dst.num_cylinders = count;
-    dst.cylinders     = malloc(sizeof *dst.cylinders * count);
-    if (count && !dst.cylinders) print_error("Could not allocate cylinders");
-    count = 0;
-    for (o = p->obj; o; o = o->next)
-        if (o->type == CYLINDER)
-        {
-            dst.cylinders[count].center   = o->fig.cy.coord;  // direct
-            dst.cylinders[count].axis     = o->fig.cy.vec;    // direct
-            dst.cylinders[count].diameter = o->fig.cy.r * 2.0;
-            dst.cylinders[count].height   = o->fig.cy.h;
-            dst.cylinders[count].color    = o->fig.cy.color;  // direct
-            count++;
-        }
+static void	init_spheres(t_scene *dst, const t_parsed_scene *p)
+{
+	int	count;
 
-    return dst;
+	count = count_spheres(p);
+	dst->num_spheres = count;
+	dst->spheres = malloc(sizeof * dst->spheres * count);
+	if (count && !dst->spheres)
+		print_error("Could not allocate spheres");
+	fill_spheres(dst, p);
+}
+
+t_scene	build_runtime_scene(const t_parsed_scene *p)
+{
+	t_scene	dst;
+
+	dst = (t_scene){0};
+	init_elements(&dst, p);
+	init_lights(&dst, p);
+	init_spheres(&dst, p);
+	init_planes(&dst, p);
+	init_cylinders(&dst, p);
+	return (dst);
 }

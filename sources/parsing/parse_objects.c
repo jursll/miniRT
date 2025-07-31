@@ -6,7 +6,7 @@
 /*   By: jjakupi <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/24 15:35:27 by jjakupi           #+#    #+#             */
-/*   Updated: 2025/07/25 11:05:22 by jjakupi          ###   ########.fr       */
+/*   Updated: 2025/07/25 15:41:46 by jjakupi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ float	parse_d_h(char *s)
 	parts = ft_split(s, ',');
 	if (counter(parts) != 1)
 		print_error("Only one argument needed");
+	free_arr(parts);
 	if (!is_a_valid_float(s))
 		print_error("Must be a valid number");
 	d = string_to_float(s);

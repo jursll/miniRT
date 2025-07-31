@@ -6,7 +6,7 @@
 /*   By: jjakupi <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/24 16:51:26 by jjakupi           #+#    #+#             */
-/*   Updated: 2025/07/25 11:36:41 by jjakupi          ###   ########.fr       */
+/*   Updated: 2025/07/25 16:23:51 by jjakupi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ typedef enum e_figure
 
 typedef union u_figures
 {
-	t_parsed_sphere	sp;
+	t_parsed_sphere		sp;
 	t_parsed_plane		pl;
 	t_parsed_cylinder	cy;
 }			t_figures;
@@ -87,9 +87,9 @@ typedef union u_figures
 /* Object linked list */
 typedef struct s_parsed_object
 {
-	int				i;
-	t_figure		type;
-	t_figures		fig;
+	int						i;
+	t_figure				type;
+	t_figures				fig;
 	struct s_parsed_object	*next;
 }			t_parsed_object;
 
@@ -97,13 +97,13 @@ typedef struct s_parsed_object
 typedef struct s_parsed_scene
 {
 	t_parsed_ambient	ambient;
-	t_parsed_camera	cam;
+	t_parsed_camera		cam;
 	t_parsed_light		light;
-	t_parsed_object	*obj;
-	int			has_ambient;
-	int			has_camera;
-	int			has_light;
-	 int         num_lights;
+	t_parsed_object		*obj;
+	int					has_ambient;
+	int					has_camera;
+	int					has_light;
+	int					num_lights;
 }				t_parsed_scene;
 
 void		parse_color(char *str, t_color *c);
@@ -135,6 +135,9 @@ int			open_and_init(int argc, char **argv, t_parsed_scene *scene);
 void		normalize_whitespace(char *s);
 void		add_object(char **tok, t_parsed_scene*scene, t_figure type);
 void		dispatch_tokens(char **tok, t_parsed_scene *scene);
-t_scene		build_runtime_scene(const t_parsed_scene *parsed);
+t_scene		build_runtime_scene(const t_parsed_scene *p);
+void		init_cylinders(t_scene *dst, const t_parsed_scene *p);
+void		init_planes(t_scene *dst, const t_parsed_scene *p);
+void		init_elements(t_scene *dst, const t_parsed_scene *p);
 
 #endif
