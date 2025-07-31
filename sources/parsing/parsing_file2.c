@@ -40,7 +40,7 @@ void	add_object(char **tok, t_parsed_scene *scene, t_figure type)
 	}
 }
 
-void	dispatch_tokens(char **tok, t_parsed_scene *scene)
+bool	dispatch_tokens(char **tok, t_parsed_scene *scene)
 {
 	if (!ft_strcmp(tok[0], "A"))
 		parse_ambient(tok, scene);
@@ -55,8 +55,6 @@ void	dispatch_tokens(char **tok, t_parsed_scene *scene)
 	else if (!ft_strcmp(tok[0], "cy"))
 		add_object(tok, scene, CYLINDER);
 	else
-	{
-		free_arr(tok);
-		print_error("Unknown element identifier");
-	}
+		return (false);
+	return (true);
 }

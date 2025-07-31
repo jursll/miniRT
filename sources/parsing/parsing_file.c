@@ -31,27 +31,36 @@ void	validate_scene(t_parsed_scene *scene)
 		print_error("Missing point light (L)");
 }
 
+static void	handle_line(char *trimmed, t_parsed_scene *scene)
+{
+	char	**tokens;
+	bool	ok;
+
+	tokens = ft_split(trimmed, ' ');
+	free (trimmed);
+	if (!tokens)
+		print_error("Malloc failed on split");
+	ok = dispatch_tokens(tokens, scene);
+	free_arr(tokens);
+	if (!ok)
+		print_error("Unknown element identifier");
+}
+
 void	parse_scene_file(int fd, t_parsed_scene *scene)
 {
 	char	*line;
 	char	*trimmed;
-	char	**tokens;
 
 	line = get_next_line(fd);
-	while (line != NULL)
+	while (line)
 	{
 		trimmed = ft_strtrim(line, " \t\r\n");
-		free(line);
+		free (line);
 		normalize_whitespace(trimmed);
-		if (trimmed[0] != '\0' && trimmed[0] != '#')
-		{
-			tokens = ft_split(trimmed, ' ');
-			if (!tokens)
-				print_error("Malloc failed on split");
-			dispatch_tokens(tokens, scene);
-			free_arr(tokens);
-		}
-		free(trimmed);
+		if (*trimmed && *trimmed != '#')
+			handle_line(trimmed, scene);
+		else
+			free(trimmed);
 		line = get_next_line(fd);
 	}
 	close(fd);

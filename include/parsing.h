@@ -134,7 +134,7 @@ void		parse_scene_file(int fd, t_parsed_scene *scene);
 int			open_and_init(int argc, char **argv, t_parsed_scene *scene);
 void		normalize_whitespace(char *s);
 void		add_object(char **tok, t_parsed_scene*scene, t_figure type);
-void		dispatch_tokens(char **tok, t_parsed_scene *scene);
+bool		dispatch_tokens(char **tok, t_parsed_scene *scene);
 t_scene		build_runtime_scene(const t_parsed_scene *p);
 void		init_cylinders(t_scene *dst, const t_parsed_scene *p);
 void		init_planes(t_scene *dst, const t_parsed_scene *p);
