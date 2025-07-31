@@ -6,13 +6,12 @@
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/03 12:38:12 by julrusse          #+#    #+#             */
-/*   Updated: 2025/07/03 12:38:36 by julrusse         ###   ########.fr       */
+/*   Updated: 2025/07/31 17:00:05 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/miniRT.h"
 
-/* returns a+b */
 t_v3d	add(t_v3d a, t_v3d b)
 {
 	t_v3d	res;
@@ -23,7 +22,6 @@ t_v3d	add(t_v3d a, t_v3d b)
 	return (res);
 }
 
-/* returns a-b */
 t_v3d	sub(t_v3d a, t_v3d b)
 {
 	t_v3d	res;

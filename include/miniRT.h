@@ -6,7 +6,7 @@
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 13:28:02 by julrusse          #+#    #+#             */
-/*   Updated: 2025/07/31 10:49:46 by julrusse         ###   ########.fr       */
+/*   Updated: 2025/07/31 18:17:38 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,21 +24,21 @@
 # define WIN_W 800
 # define WIN_H 600
 
-#  define KEY_ESC		65307
-#  define KEY_W			119
-#  define KEY_S			115
-#  define KEY_A			97
-#  define KEY_D			100
-#  define KEY_Q			113
-#  define KEY_E			101
-#  define KEY_LEFT		65361
-#  define KEY_RIGHT		65363
-#  define KEY_UP		65362
-#  define KEY_DOWN		65364
-#  define KEY_P			112
-#  define KEY_M			109
-#  define KEY_TAB		65289
-#  define KEY_SHIFT_TAB	65056
+# define KEY_ESC		65307
+# define KEY_W			119
+# define KEY_S			115
+# define KEY_A			97
+# define KEY_D			100
+# define KEY_Q			113
+# define KEY_E			101
+# define KEY_LEFT		65361
+# define KEY_RIGHT		65363
+# define KEY_UP			65362
+# define KEY_DOWN		65364
+# define KEY_P			112
+# define KEY_M			109
+# define KEY_N			110
+# define KEY_B			98
 
 # ifndef M_PI
 #  define M_PI 3.14159265358979323846
@@ -83,6 +83,14 @@ typedef struct s_camera
 	t_v3d	orientation;   /* Where camera is looking (normalized) */
 	double	fov;           /* Field of view in degrees */
 }	t_camera;
+
+typedef struct s_camera_cache
+{
+	t_v3d	right;
+	t_v3d	up;
+	double	fov_scale;
+	double	aspect_ratio;
+}	t_camera_cache;
 
 // -------- AMBIENT LIGHTING -------- //
 typedef struct s_ambient
@@ -199,6 +207,7 @@ t_v3d		vec_cross(t_v3d a, t_v3d b);
 double		vec_norm(t_v3d a);
 t_v3d		rotate_y(t_v3d v, double angle);
 t_v3d		rotate_x(t_v3d v, double angle);
+t_v3d	rotate_z(t_v3d v, double angle);
 
 // -------- math.c -------- //
 double		quad(double a, double b, double c);
@@ -218,18 +227,20 @@ double		dot_product_v3d(t_v3d v1, t_v3d v2);
 t_v3d		normalize_vector(t_v3d v);
 t_ray		create_ray(t_v3d origin, t_v3d direction);
 
-// -------- raytracing.c -------- //
-t_v3d		calculate_ray_direction(t_camera cam, int x, int y);
+// -------- camera.c -------- //
+t_camera_cache	precompute_camera(t_camera cam);
+t_v3d	calculate_ray_direction(t_camera cam, t_camera_cache *cache, int x, int y);
 void		launch_rays(t_rt *rt);
+void	move_camera_relative(t_camera *cam, t_v3d movement);
 
-// -------- raytracing_with_lights.c -------- //
+// -------- raytracing.c -------- //
 t_v3d		ray_at(t_ray ray, double t);
 t_v3d		get_sphere_normal(t_v3d hit_point, t_sphere sphere);
 void		check_sphere_hit(t_ray ray, t_sphere sphere, t_hit *hit);
 void		check_plane_hit(t_ray ray, t_plane plane, t_hit *hit);
 void		check_cylinder_hit(t_ray ray, t_cylinder cylinder, t_hit *hit);
 t_color		calculate_lighting(t_rt *rt, t_hit *hit);
-int			trace_ray_with_lighting(t_rt *rt, t_ray ray);
+int			trace_ray(t_rt *rt, t_ray ray);
 
 // -------- sphere.c -------- //
 double		intersect_sphere(t_ray ray, t_sphere sphere);
@@ -243,6 +254,10 @@ double		intersect_infinite_cylinder(t_ray ray, t_cylinder cyl);
 double		intersect_cap(t_ray ray, t_v3d cap_center, t_v3d normal, double radius);
 double		intersect_cylinder(t_ray ray, t_cylinder cyl);
 t_v3d		get_cylinder_normal(t_v3d point, t_cylinder cyl);
+double	try_cylinder_hit(t_ray ray, t_cylinder cyl, double *discriminant);
+double	compute_a(t_ray ray, t_cylinder cyl);
+double	compute_b(t_ray ray, t_cylinder cyl);
+double	compute_c(t_ray ray, t_cylinder cyl);
 
 // -------- lighting.c -------- //
 t_v3d		sphere_normal(t_v3d point, t_sphere sphere);
@@ -261,6 +276,10 @@ void		select_previous_object(t_rt *rt);
 int			handle_key(int keycode, t_rt *rt);
 void		rotate_camera(t_camera *cam, double yaw, double pitch);
 void		move_camera_special(t_camera *cam, t_v3d movement);
+void	handle_selection_key(int keycode, t_rt *rt);
+void	handle_movement_key(int keycode, t_rt *rt, double move_speed);
+void	handle_rotation_key(int keycode, t_rt *rt, double rotate_speed);
+void	handle_zoom_key(int keycode, t_rt *rt);
 
 // -------- selection_system.c -------- //
 void		init_selection(t_rt *rt);

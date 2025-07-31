@@ -5,133 +5,154 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/04 16:33:35 by julrusse          #+#    #+#             */
-/*   Updated: 2025/07/25 15:04:48 by julrusse         ###   ########.fr       */
+/*   Created: 2025/07/17 15:13:45 by julrusse          #+#    #+#             */
+/*   Updated: 2025/07/31 17:05:39 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/miniRT.h"
 
-/*
-	Calculate ray direction for a pixel
-	This creates a ray from camera through each pixel
-*/
-t_v3d	calculate_ray_direction(t_camera cam, int x, int y)
+/* Calculate hit point from ray and distance */
+t_v3d	ray_at(t_ray ray, double t)
 {
-	double	fov_rad;
-	double	aspect_ratio;
-	double	pixel_x;
-	double	pixel_y;
-	t_v3d	direction;
-	t_v3d	world_up;
-	t_v3d	cam_right;
-	t_v3d	cam_up;
-
-	// Convert FOV to radians
-	fov_rad = cam.fov * M_PI / 180.0;
-	aspect_ratio = (double)WIN_W / (double)WIN_H;
-
-	// Convert pixel to camera space coordinates
-	pixel_x = (2.0 * x / WIN_W - 1.0) * aspect_ratio * tan(fov_rad / 2.0);
-	pixel_y = (1.0 - 2.0 * y / WIN_H) * tan(fov_rad / 2.0);
-
-	// Special case: if camera is looking straight along Z axis, use simple method
-	if (fabs(cam.orientation.x) < 0.001 && fabs(cam.orientation.y) < 0.001)
-	{
-		direction.x = pixel_x;
-		direction.y = pixel_y;
-		direction.z = cam.orientation.z;
-		return (normalize_vector(direction));
-	}
-
-	// Build camera coordinate system
-	world_up = vec(0, 1, 0);
-
-	// Right = up × forward (this gives correct right direction!)
-	cam_right = vec_cross(world_up, cam.orientation);
-	cam_right = normalize_vector(cam_right);
-
-	// Recalculate up = forward × right
-	cam_up = vec_cross(cam.orientation, cam_right);
-	cam_up = normalize_vector(cam_up);
-
-	// Build ray direction
-	direction = cam.orientation;
-	direction = vec_add(direction, sc_mult(cam_right, pixel_x));
-	direction = vec_add(direction, sc_mult(cam_up, pixel_y));
-
-	return (normalize_vector(direction));
+	return (vec_add(ray.origin, sc_mult(ray.direction, t)));
 }
 
-/*
-	Main rendering loop - cast rays for each pixel
-*/
-void	launch_rays(t_rt *rt)
+/* Get normal for sphere at hit point */
+t_v3d	get_sphere_normal(t_v3d hit_point, t_sphere sphere)
 {
-	int		x;
-	int		y;
-	t_ray	ray;
-	int		color;
+	t_v3d	normal;
 
-	y = 0;
-	while (y < WIN_H)
-	{
-		x = 0;
-		while (x < WIN_W)
-		{
-			// Create ray from camera through pixel
-			ray.origin = rt->scene.camera.position;
-			ray.direction = calculate_ray_direction(rt->scene.camera, x, y);
-
-			// Trace ray and get color
-			color = trace_ray_with_lighting(rt, ray);
-
-			// Put pixel on screen
-			my_mlx_pixel_put(rt->mlbx->img, x, y, color);
-			x++;
-		}
-		y++;
-	}
+	normal = vec_sub(hit_point, sphere.center);
+	return (normalize_vector(normal));
 }
-/*
-	REPLACED BY TRACE_RAY_WITH_LIGHTING
 
-int	trace_ray(t_rt *rt, t_ray ray)
+/* Check sphere intersection and fill hit info */
+void	check_sphere_hit(t_ray ray, t_sphere sphere, t_hit *hit)
 {
 	double	t;
-	double	min_t;
-	int		hit_color;
+
+	t = intersect_sphere(ray, sphere);
+	if (t > 0 && t < hit->t)
+	{
+		hit->t = t;
+		hit->point = ray_at(ray, t);
+		hit->normal = get_sphere_normal(hit->point, sphere);
+		hit->color = sphere.color;
+		hit->hit_anything = 1;
+	}
+}
+
+/* Check plane intersection and fill hit info */
+void	check_plane_hit(t_ray ray, t_plane plane, t_hit *hit)
+{
+	double	t;
+
+	t = intersect_plane(ray, plane);
+	if (t > 0 && t < hit->t)
+	{
+		hit->t = t;
+		hit->point = ray_at(ray, t);
+		hit->normal = plane.normal;
+		hit->color = plane.color;
+		hit->hit_anything = 1;
+	}
+}
+
+/* Check cylinder intersection and fill hit info */
+void	check_cylinder_hit(t_ray ray, t_cylinder cylinder, t_hit *hit)
+{
+	double	t;
+
+	t = intersect_cylinder(ray, cylinder);
+	if (t > 0 && t < hit->t)
+	{
+		hit->t = t;
+		hit->point = ray_at(ray, t);
+		hit->normal = get_cylinder_normal(hit->point, cylinder);
+		hit->color = cylinder.color;
+		hit->hit_anything = 1;
+	}
+}
+
+/* Calculate lighting at a point */
+t_color	calculate_lighting(t_rt *rt, t_hit *hit)
+{
+	t_color	final_color;
+	t_color	ambient;
+	t_color	diffuse;
+	t_v3d	light_dir;
+	double	intensity;
 	int		i;
 
-	min_t = INFINITY;
-	hit_color = 0; // Black background
+	/* Start with ambient lighting */
+	ambient = apply_ambient(hit->color, rt->scene.ambient);
+	final_color = ambient;
 
-	// Check intersection with all spheres
+	/* Add contribution from each light */
+	i = 0;
+	while (i < rt->scene.num_lights)
+	{
+		/* Direction from hit point to light */
+		light_dir = vec_sub(rt->scene.lights[i].position, hit->point);
+		light_dir = normalize_vector(light_dir);
+
+		/* Calculate diffuse lighting (dot product!) */
+		intensity = vec_dot(hit->normal, light_dir);
+		if (intensity > 0 && !is_in_shadow(rt, hit->point, rt->scene.lights[i].position))
+		{
+			intensity *= rt->scene.lights[i].brightness;
+			diffuse = calculate_diffuse(hit->color, hit->normal,
+					light_dir, intensity);
+			final_color = add_colors(final_color, diffuse);
+		}
+		i++;
+	}
+
+	return (final_color);
+}
+
+/* Enhanced trace_ray with lighting */
+int	trace_ray(t_rt *rt, t_ray ray)
+{
+	t_hit	hit;
+	int		i;
+
+	/* Initialize hit info */
+	hit.t = INFINITY;
+	hit.hit_anything = 0;
+
+	/* Check all spheres */
 	i = 0;
 	while (i < rt->scene.num_spheres)
 	{
-		t = intersect_sphere(ray, rt->scene.spheres[i]);
-		if (t > 0 && t < min_t)
-		{
-			min_t = t;
-			hit_color = rgb_to_int(rt->scene.spheres[i].color);
-		}
+		check_sphere_hit(ray, rt->scene.spheres[i], &hit);
 		i++;
 	}
 
-	// Check intersection with all planes
+	/* Check all planes */
 	i = 0;
 	while (i < rt->scene.num_planes)
 	{
-		t = intersect_plane(ray, rt->scene.planes[i]);
-		if (t > 0 && t < min_t)
-		{
-			min_t = t;
-			hit_color = rgb_to_int(rt->scene.planes[i].color);
-		}
+		check_plane_hit(ray, rt->scene.planes[i], &hit);
 		i++;
 	}
 
-	return (hit_color);
+	/* Check all cylinders */
+	i = 0;
+	while (i < rt->scene.num_cylinders)
+	{
+		check_cylinder_hit(ray, rt->scene.cylinders[i], &hit);
+		i++;
+	}
+
+	/* If we hit something, calculate lighting */
+	if (hit.hit_anything)
+	{
+		t_color lit_color = calculate_lighting(rt, &hit);
+		return (rgb_to_int(lit_color));
+	}
+
+	/* Background color */
+	return (0);  // Black
 }
-*/

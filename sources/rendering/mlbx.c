@@ -6,7 +6,7 @@
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 17:20:39 by julrusse          #+#    #+#             */
-/*   Updated: 2025/07/31 10:47:08 by julrusse         ###   ########.fr       */
+/*   Updated: 2025/07/31 18:35:13 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ int	esc_key(const int keycode, t_rt *rt)
 	return (0);
 }
 
-/* creates the graphical window */
 void	make_window(t_rt *rt)
 {
 	t_mlbx	*mlbx;
@@ -36,15 +35,10 @@ void	make_window(t_rt *rt)
 			&mlbx->img.endian);
 	display(rt);
 	mlx_hook(mlbx->mlx_win, 17, 0, destroy, rt);
-//	mlx_key_hook(mlbx->mlx_win, esc_key, rt);
-	mlx_hook(mlbx->mlx_win, 2, 1L<<0, handle_key, rt);
-//	mlx_hook(mlbx->mlx_win, 4, 1L<<2, mouse_press, rt);  // Mouse press
-//	mlx_hook(mlbx->mlx_win, 5, 1L<<3, mouse_release, rt);  // Mouse release
-//	mlx_hook(mlbx->mlx_win, 6, 1L<<6, mouse_move, rt);  // Mouse move
+	mlx_hook(mlbx->mlx_win, 2, 1L << 0, handle_key, rt);
 	mlx_loop(mlbx->mlx);
 }
 
-/* close the window and exit the program */
 int	destroy(t_rt *rt)
 {
 	mlx_destroy_window(rt->mlbx->mlx, rt->mlbx->mlx_win);
@@ -53,29 +47,20 @@ int	destroy(t_rt *rt)
 	return (0);
 }
 
-/* Updates the displayed image */
 int	display(t_rt *rt)
 {
 	char	info_str[256];
 
-	/* Render the scene */
 	launch_rays(rt);
-
-	/* Draw selection info on the image */
 	draw_selection_info(rt);
-
-	/* Display the image */
 	mlx_put_image_to_window(rt->mlbx->mlx, rt->mlbx->mlx_win,
 		rt->mlbx->img.img, 0, 0);
-
-	/* Draw text info over the image */
 	get_object_info(rt, info_str);
-	mlx_string_put(rt->mlbx->mlx, rt->mlbx->mlx_win, 15, 25, 0xFFFFFF, info_str);
-
+	mlx_string_put(rt->mlbx->mlx, rt->mlbx->mlx_win, 15, 25, 0xFFFFFF,
+		info_str);
 	return (0);
 }
 
-/* draws a pixel at (x, y) in color */
 void	my_mlx_pixel_put(t_data img, int x, int y, int color)
 {
 	char	*dst;

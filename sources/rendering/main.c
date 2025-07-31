@@ -6,7 +6,7 @@
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 13:32:25 by julrusse          #+#    #+#             */
-/*   Updated: 2025/07/25 14:23:50 by julrusse         ###   ########.fr       */
+/*   Updated: 2025/07/31 18:30:20 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,14 @@ void	free_rt(t_rt *rt)
 		free(rt->mlbx);
 }
 
-int main(int argc, char **argv)
+int	main(int argc, char **argv)
 {
-	t_rt			rt = {0};
-	t_parsed_scene	ps = {0};
+	t_rt			rt;
+	t_parsed_scene	ps;
 	int				fd;
 
+	rt = (t_rt){0};
+	ps = (t_parsed_scene){0};
 	if (argc != 2)
 	{
 		printf("Usage: %s <scene_file.rt>\n", argv[0]);
@@ -42,6 +44,7 @@ int main(int argc, char **argv)
 	parse_scene_file(fd, &ps);
 	validate_scene(&ps);
 	rt.scene = build_runtime_scene(&ps);
+	init_selection(&rt);
 	make_window(&rt);
 	return (0);
 }

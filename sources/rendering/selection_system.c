@@ -6,7 +6,7 @@
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 10:27:18 by julrusse          #+#    #+#             */
-/*   Updated: 2025/07/31 10:46:11 by julrusse         ###   ########.fr       */
+/*   Updated: 2025/07/31 16:52:36 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,10 @@ void	move_selected_object(t_rt *rt, t_v3d movement)
 	sel = rt->current_selection;
 
 	if (sel.type == SEL_CAMERA)
-		rt->scene.camera.position = vec_add(rt->scene.camera.position, movement);
+	{
+		/* Camera moves relative to its orientation */
+		move_camera_relative(&rt->scene.camera, movement);
+	}
 	else if (sel.type == SEL_SPHERE)
 		rt->scene.spheres[sel.index].center = vec_add(rt->scene.spheres[sel.index].center, movement);
 	else if (sel.type == SEL_PLANE)
