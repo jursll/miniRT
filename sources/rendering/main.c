@@ -6,7 +6,7 @@
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 13:32:25 by julrusse          #+#    #+#             */
-/*   Updated: 2025/08/08 11:50:42 by julrusse         ###   ########.fr       */
+/*   Updated: 2025/08/08 12:24:47 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ int	main(int argc, char **argv)
 	parse_scene_file(fd, &ps);
 	validate_scene(&ps);
 	rt.scene = build_runtime_scene(&ps);
+	free_scene_objects(&ps);
 	init_selection(&rt);
 	make_window(&rt);
 	return (0);
