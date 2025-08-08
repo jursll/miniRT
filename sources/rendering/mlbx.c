@@ -6,7 +6,7 @@
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 17:20:39 by julrusse          #+#    #+#             */
-/*   Updated: 2025/08/06 15:53:11 by julrusse         ###   ########.fr       */
+/*   Updated: 2025/08/08 11:56:51 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void	make_window(t_rt *rt)
 			&mlbx->img.endian);
 	display(rt);
 	mlx_hook(mlbx->mlx_win, 17, 0, destroy, rt);
-	mlx_hook(mlbx->mlx_win, 2, 1L << 0, handle_key, rt);
+	mlx_hook(mlbx->mlx_win, 2, 1L << 0, handle_key, rt); //test inverse
 	mlx_loop(mlbx->mlx);
 }
 
