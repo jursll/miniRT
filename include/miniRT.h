@@ -6,15 +6,15 @@
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 13:28:02 by julrusse          #+#    #+#             */
-/*   Updated: 2025/07/31 18:17:38 by julrusse         ###   ########.fr       */
+/*   Updated: 2025/08/07 10:18:39 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINIRT_H
 # define MINIRT_H
 
-#include "../libft/libft.h"
-#include "../minilibx-linux/mlx.h"
+# include "../libft/libft.h"
+# include "../minilibx-linux/mlx.h"
 
 # include <stdio.h>
 # include <stdlib.h>
@@ -66,22 +66,21 @@ typedef struct s_ray
 	t_v3d	direction;
 }	t_ray;
 
-/* Structure to store hit information */
 typedef struct s_hit
 {
-	double	t;              // Distance to hit point
-	t_v3d	point;          // Where ray hit
-	t_v3d	normal;         // Surface normal at hit point
-	t_color	color;          // Object color
-	int		hit_anything;   // Did we hit something?
+	double	t;
+	t_v3d	point;
+	t_v3d	normal;
+	t_color	color;
+	int		hit_anything;
 }	t_hit;
 
 // -------- CAMERA -------- //
 typedef struct s_camera
 {
-	t_v3d	position;      /* Camera position in 3D space */
-	t_v3d	orientation;   /* Where camera is looking (normalized) */
-	double	fov;           /* Field of view in degrees */
+	t_v3d	position;
+	t_v3d	orientation;
+	double	fov;
 }	t_camera;
 
 typedef struct s_camera_cache
@@ -95,40 +94,40 @@ typedef struct s_camera_cache
 // -------- AMBIENT LIGHTING -------- //
 typedef struct s_ambient
 {
-	double	ratio;         /* Lighting ratio 0.0-1.0 */
-	t_color	color;         /* RGB color */
+	double	ratio;
+	t_color	color;
 }	t_ambient;
 
 // -------- LIGHT SOURCE -------- //
 typedef struct s_light
 {
-	t_v3d	position;      /* Light position */
-	double	brightness;    /* Brightness ratio 0.0-1.0 */
-	t_color	color;         /* RGB color (for bonus) */
+	t_v3d	position;
+	double	brightness;
+	t_color	color;
 }	t_light;
 
 // -------- OBJECTS -------- //
 typedef struct s_sphere
 {
-	t_v3d	center;        /* Sphere center */
-	double	diameter;      /* Sphere diameter */
-	t_color	color;         /* RGB color */
+	t_v3d	center;
+	double	diameter;
+	t_color	color;
 }	t_sphere;
 
 typedef struct s_plane
 {
-	t_v3d	point;         /* A point on the plane */
-	t_v3d	normal;        /* Normal vector (normalized) */
-	t_color	color;         /* RGB color */
+	t_v3d	point;
+	t_v3d	normal;
+	t_color	color;
 }	t_plane;
 
 typedef struct s_cylinder
 {
-	t_v3d	center;        /* Center of cylinder */
-	t_v3d	axis;          /* Axis direction (normalized) */
-	double	diameter;      /* Cylinder diameter */
-	double	height;        /* Cylinder height */
-	t_color	color;         /* RGB color */
+	t_v3d	center;
+	t_v3d	axis;
+	double	diameter;
+	double	height;
+	t_color	color;
 }	t_cylinder;
 
 // -------- SCENE -------- //
@@ -136,13 +135,13 @@ typedef struct s_scene
 {
 	t_ambient	ambient;
 	t_camera	camera;
-	t_light		*lights;       /* Array of lights */
+	t_light		*lights;
 	int			num_lights;
-	t_sphere	*spheres;      /* Array of spheres */
+	t_sphere	*spheres;
 	int			num_spheres;
-	t_plane		*planes;       /* Array of planes */
+	t_plane		*planes;
 	int			num_planes;
-	t_cylinder	*cylinders;    /* Array of cylinders */
+	t_cylinder	*cylinders;
 	int			num_cylinders;
 }	t_scene;
 
@@ -159,7 +158,7 @@ typedef enum e_selection_type
 typedef struct s_selection
 {
 	t_selection_type	type;
-	int					index;  // Index in the object array
+	int					index;
 	char				name[32];
 }	t_selection;
 
@@ -189,109 +188,134 @@ typedef struct s_rt
 	int			selection_index;
 }	t_rt;
 
-
-// -------- mlbx.c -------- //
-int			esc_key(const int keycode, t_rt *rt);
-void		make_window(t_rt *rt);
-int			destroy(t_rt *rt);
-int			display(t_rt *rt);
-void		my_mlx_pixel_put(t_data img, int x, int y, int color);
-
-// -------- vector.c -------- //
-t_v3d		vec(double x, double y, double z);
-t_v3d		vec_add(t_v3d a, t_v3d b);
-t_v3d		vec_sub(t_v3d a, t_v3d b);
-t_v3d		vec_mult(t_v3d a, t_v3d b);
-double		vec_dot(t_v3d a, t_v3d b);
-t_v3d		vec_cross(t_v3d a, t_v3d b);
-double		vec_norm(t_v3d a);
-t_v3d		rotate_y(t_v3d v, double angle);
-t_v3d		rotate_x(t_v3d v, double angle);
-t_v3d	rotate_z(t_v3d v, double angle);
-
 // -------- math.c -------- //
-double		quad(double a, double b, double c);
-double		dot_product(t_v3d a, t_v3d b);
-int			rgb_to_int(t_color rgb);
-double		dst(t_v3d *p1, t_v3d *p2);
-t_v3d		add(t_v3d a, t_v3d b);
-t_v3d		sub(t_v3d a, t_v3d b);
-t_v3d		new_v3d(double x, double y, double z);
-t_v3d		sc_mult(t_v3d a, double nb);
-double		norme(t_v3d a);
-t_v3d		cross(t_v3d a, t_v3d b);
-t_v3d		mult(t_v3d a, t_v3d b);
-double		dot_product_v3d(t_v3d v1, t_v3d v2);
+double			quad(double a, double b, double c);
+double			dot_product(t_v3d a, t_v3d b);
+int				rgb_to_int(t_color rgb);
+double			dst(t_v3d *p1, t_v3d *p2);
+t_v3d			add(t_v3d a, t_v3d b);
+t_v3d			sub(t_v3d a, t_v3d b);
+t_v3d			new_v3d(double x, double y, double z);
+t_v3d			sc_mult(t_v3d a, double nb);
+double			norme(t_v3d a);
+t_v3d			cross(t_v3d a, t_v3d b);
+t_v3d			mult(t_v3d a, t_v3d b);
+double			dot_product_v3d(t_v3d v1, t_v3d v2);
 
 // -------- normalize.c -------- //
-t_v3d		normalize_vector(t_v3d v);
-t_ray		create_ray(t_v3d origin, t_v3d direction);
+t_v3d			normalize_vector(t_v3d v);
+t_ray			create_ray(t_v3d origin, t_v3d direction);
+
+// -------- vector.c -------- //
+t_v3d			vec(double x, double y, double z);
+t_v3d			vec_add(t_v3d a, t_v3d b);
+t_v3d			vec_sub(t_v3d a, t_v3d b);
+t_v3d			vec_mult(t_v3d a, t_v3d b);
+double			vec_dot(t_v3d a, t_v3d b);
+t_v3d			vec_cross(t_v3d a, t_v3d b);
+double			vec_norm(t_v3d a);
+t_v3d			rotate_y(t_v3d v, double angle);
+t_v3d			rotate_x(t_v3d v, double angle);
+t_v3d			rotate_z(t_v3d v, double angle);
 
 // -------- camera.c -------- //
 t_camera_cache	precompute_camera(t_camera cam);
-t_v3d	calculate_ray_direction(t_camera cam, t_camera_cache *cache, int x, int y);
-void		launch_rays(t_rt *rt);
-void	move_camera_relative(t_camera *cam, t_v3d movement);
-
-// -------- raytracing.c -------- //
-t_v3d		ray_at(t_ray ray, double t);
-t_v3d		get_sphere_normal(t_v3d hit_point, t_sphere sphere);
-void		check_sphere_hit(t_ray ray, t_sphere sphere, t_hit *hit);
-void		check_plane_hit(t_ray ray, t_plane plane, t_hit *hit);
-void		check_cylinder_hit(t_ray ray, t_cylinder cylinder, t_hit *hit);
-t_color		calculate_lighting(t_rt *rt, t_hit *hit);
-int			trace_ray(t_rt *rt, t_ray ray);
-
-// -------- sphere.c -------- //
-double		intersect_sphere(t_ray ray, t_sphere sphere);
-
-// -------- plane.c -------- //
-double		intersect_plane(t_ray ray, t_plane plane);
-
-// -------- cylinder.c -------- //
-int			within_height(t_v3d point, t_cylinder cyl);
-double		intersect_infinite_cylinder(t_ray ray, t_cylinder cyl);
-double		intersect_cap(t_ray ray, t_v3d cap_center, t_v3d normal, double radius);
-double		intersect_cylinder(t_ray ray, t_cylinder cyl);
-t_v3d		get_cylinder_normal(t_v3d point, t_cylinder cyl);
-double	try_cylinder_hit(t_ray ray, t_cylinder cyl, double *discriminant);
-double	compute_a(t_ray ray, t_cylinder cyl);
-double	compute_b(t_ray ray, t_cylinder cyl);
-double	compute_c(t_ray ray, t_cylinder cyl);
-
-// -------- lighting.c -------- //
-t_v3d		sphere_normal(t_v3d point, t_sphere sphere);
-t_v3d		plane_normal(t_plane plane);
-t_color		apply_ambient(t_color object_color, t_ambient ambient);
-t_color		calculate_diffuse(t_color object_color, t_v3d normal,
-				t_v3d light_dir, double intensity);
-t_color		add_colors(t_color c1, t_color c2);
-
-// -------- shadows.c -------- //
-int			is_in_shadow(t_rt *rt, t_v3d point, t_v3d light_pos);
+t_v3d			calculate_ray_direction(t_camera cam, t_camera_cache *cache,
+					int x, int y);
+void			launch_rays(t_rt *rt);
+void			move_camera_relative(t_camera *cam, t_v3d movement);
 
 // -------- controls.c -------- //
-void		select_next_object(t_rt *rt);
-void		select_previous_object(t_rt *rt);
-int			handle_key(int keycode, t_rt *rt);
-void		rotate_camera(t_camera *cam, double yaw, double pitch);
-void		move_camera_special(t_camera *cam, t_v3d movement);
-void	handle_selection_key(int keycode, t_rt *rt);
-void	handle_movement_key(int keycode, t_rt *rt, double move_speed);
-void	handle_rotation_key(int keycode, t_rt *rt, double rotate_speed);
-void	handle_zoom_key(int keycode, t_rt *rt);
+void			select_next_object(t_rt *rt);
+void			select_previous_object(t_rt *rt);
+int				handle_key(int keycode, t_rt *rt);
+void			rotate_camera(t_camera *cam, double yaw, double pitch);
+void			move_camera_special(t_camera *cam, t_v3d movement);
+void			handle_selection_key(int keycode, t_rt *rt);
+void			handle_movement_key(int keycode, t_rt *rt, double move_speed);
+void			handle_rotation_key(int keycode, t_rt *rt, double rotate_speed);
+void			handle_zoom_key(int keycode, t_rt *rt);
+
+// -------- lighting.c -------- //
+t_v3d			sphere_normal(t_v3d point, t_sphere sphere);
+t_v3d			plane_normal(t_plane plane);
+t_color			apply_ambient(t_color object_color, t_ambient ambient);
+t_color			calculate_diffuse(t_color object_color, t_v3d normal,
+					t_v3d light_dir, double intensity);
+t_color			add_colors(t_color c1, t_color c2);
+
+// -------- mlbx.c -------- //
+int				esc_key(const int keycode, t_rt *rt);
+void			make_window(t_rt *rt);
+int				destroy(t_rt *rt);
+int				display(t_rt *rt);
+void			my_mlx_pixel_put(t_data img, int x, int y, int color);
+
+// -------- move_objects.c -------- //
+void			move_selected_object(t_rt *rt, t_v3d movement);
+void			rotate_selected_object(t_rt *rt, double yaw, double pitch);
+
+// -------- o_cylinder.c -------- //
+int				within_height(t_v3d point, t_cylinder cyl);
+double			intersect_infinite_cylinder(t_ray ray, t_cylinder cyl);
+double			intersect_cap(t_ray ray, t_v3d cap_center, t_v3d normal,
+					double radius);
+double			intersect_cylinder(t_ray ray, t_cylinder cyl);
+t_v3d			get_cylinder_normal(t_v3d point, t_cylinder cyl);
+double			try_cylinder_hit(t_ray ray, t_cylinder cyl,
+					double *discriminant);
+double			compute_a(t_ray ray, t_cylinder cyl);
+double			compute_b(t_ray ray, t_cylinder cyl);
+double			compute_c(t_ray ray, t_cylinder cyl);
+
+// -------- o_plane_sphere.c -------- //
+double			intersect_plane(t_ray ray, t_plane plane);
+double			intersect_sphere(t_ray ray, t_sphere sphere);
+
+// -------- o_format_info.c -------- //
+void			format_camera_info(t_rt *rt, char *info_str);
+void			format_sphere_info(t_rt *rt, char *info_str);
+void			format_plane_info(t_rt *rt, char *info_str);
+void			format_cylinder_info(t_rt *rt, char *info_str);
+void			format_light_info(t_rt *rt, char *info_str);
+
+// -------- raytracing.c -------- //
+t_v3d			ray_at(t_ray ray, double t);
+t_v3d			get_sphere_normal(t_v3d hit_point, t_sphere sphere);
+void			check_sphere_hit(t_ray ray, t_sphere sphere, t_hit *hit);
+void			check_plane_hit(t_ray ray, t_plane plane, t_hit *hit);
+void			check_cylinder_hit(t_ray ray, t_cylinder cylinder, t_hit *hit);
+t_color			calculate_lighting(t_rt *rt, t_hit *hit);
+t_color			apply_all_lights(t_rt *rt, t_hit *hit, t_color base_color);
+t_color			apply_light_contribution(t_rt *rt, t_hit *hit, t_color current,
+					int i);
+int				trace_ray(t_rt *rt, t_ray ray);
 
 // -------- selection_system.c -------- //
-void		init_selection(t_rt *rt);
-int			get_total_objects(t_rt *rt);
-t_selection	get_selection_at_index(t_rt *rt, int sel_index);
-void		move_selected_object(t_rt *rt, t_v3d movement);
-void		rotate_selected_object(t_rt *rt, double yaw, double pitch);
-void		get_object_info(t_rt *rt, char *info_str);
-void		draw_selection_info(t_rt *rt);
+void			init_selection(t_rt *rt);
+int				get_total_objects(t_rt *rt);
+t_selection		get_selection_at_index(t_rt *rt, int sel_index);
+t_selection		make_camera_selection(void);
+t_selection		make_named_selection(int index, int type, char *label);
+void			get_object_info(t_rt *rt, char *info_str);
+void			draw_selection_info(t_rt *rt);
+char			*format_vec(t_v3d v, int precision);
+
+// -------- shadows.c -------- //
+void			init_shadow_ray(t_ray *ray, t_v3d point, t_v3d light_pos,
+					double *light_distance);
+int				check_sphere_shadow(t_rt *rt, t_ray ray, double max_dist);
+int				check_cylinder_shadow(t_rt *rt, t_ray ray, double max_dist);
+int				check_plane_shadow(t_rt *rt, t_ray ray, double max_dist);
+int				is_in_shadow(t_rt *rt, t_v3d point, t_v3d light_pos);
+
+// -------- utils.c -------- //
+char			*ft_strcpy(char *dest, const char *src);
+char			*ft_dtoa(double n, int precision);
+char			*ft_strjoin_free(char *s1, const char *s2);
 
 // -------- main.c -------- //
-void		create_lit_scene(t_rt *rt);
-void		free_rt(t_rt *rt);
+void			create_lit_scene(t_rt *rt);
+void			free_rt(t_rt *rt);
 
 #endif

@@ -6,55 +6,83 @@
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:25:13 by julrusse          #+#    #+#             */
-/*   Updated: 2025/07/31 16:46:26 by julrusse         ###   ########.fr       */
+/*   Updated: 2025/08/07 09:58:57 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/miniRT.h"
 
-/* Check if point is in shadow */
+void	init_shadow_ray(t_ray *ray, t_v3d point, t_v3d light_pos,
+			double *light_distance)
+{
+	t_v3d	to_light;
+
+	to_light = vec_sub(light_pos, point);
+	*light_distance = vec_norm(to_light);
+	to_light = normalize_vector(to_light);
+	ray->origin = vec_add(point, sc_mult(to_light, 0.0001));
+	ray->direction = to_light;
+}
+
+int	check_sphere_shadow(t_rt *rt, t_ray ray, double max_dist)
+{
+	int		i;
+	double	t;
+
+	i = 0;
+	while (i < rt->scene.num_spheres)
+	{
+		t = intersect_sphere(ray, rt->scene.spheres[i]);
+		if (t > 0 && t < max_dist)
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+int	check_cylinder_shadow(t_rt *rt, t_ray ray, double max_dist)
+{
+	int		i;
+	double	t;
+
+	i = 0;
+	while (i < rt->scene.num_cylinders)
+	{
+		t = intersect_cylinder(ray, rt->scene.cylinders[i]);
+		if (t > 0 && t < max_dist)
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+int	check_plane_shadow(t_rt *rt, t_ray ray, double max_dist)
+{
+	int		i;
+	double	t;
+
+	i = 0;
+	while (i < rt->scene.num_planes)
+	{
+		t = intersect_plane(ray, rt->scene.planes[i]);
+		if (t > 0 && t < max_dist)
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
 int	is_in_shadow(t_rt *rt, t_v3d point, t_v3d light_pos)
 {
 	t_ray	shadow_ray;
-	t_v3d	to_light;
 	double	light_distance;
-	double	t;
-	int		i;
 
-	to_light = vec_sub(light_pos, point);
-	light_distance = vec_norm(to_light);
-
-	// Small optimization: normalize once
-	to_light = normalize_vector(to_light);
-	shadow_ray.origin = vec_add(point, sc_mult(to_light, 0.0001));
-	shadow_ray.direction = to_light;
-
-	// Check spheres first (usually fewer and faster)
-	i = -1;
-	while (++i < rt->scene.num_spheres)
-	{
-		t = intersect_sphere(shadow_ray, rt->scene.spheres[i]);
-		if (t > 0 && t < light_distance)
-			return (1);  // Early exit
-	}
-
-	// Then check cylinders
-	i = -1;
-	while (++i < rt->scene.num_cylinders)
-	{
-		t = intersect_cylinder(shadow_ray, rt->scene.cylinders[i]);
-		if (t > 0 && t < light_distance)
-			return (1);  // Early exit
-	}
-
-	// Finally check planes (often infinite, so check last)
-	i = -1;
-	while (++i < rt->scene.num_planes)
-	{
-		t = intersect_plane(shadow_ray, rt->scene.planes[i]);
-		if (t > 0 && t < light_distance)
-			return (1);  // Early exit
-	}
-
+	init_shadow_ray(&shadow_ray, point, light_pos, &light_distance);
+	if (check_sphere_shadow(rt, shadow_ray, light_distance))
+		return (1);
+	if (check_cylinder_shadow(rt, shadow_ray, light_distance))
+		return (1);
+	if (check_plane_shadow(rt, shadow_ray, light_distance))
+		return (1);
 	return (0);
 }

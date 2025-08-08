@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   plane.c                                            :+:      :+:    :+:   */
+/*   o_plane_sphere.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:50:33 by julrusse          #+#    #+#             */
-/*   Updated: 2025/07/31 18:36:54 by julrusse         ###   ########.fr       */
+/*   Updated: 2025/08/06 15:57:15 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,4 +26,20 @@ double	intersect_plane(t_ray ray, t_plane plane)
 	if (t < 0)
 		return (-1);
 	return (t);
+}
+
+double	intersect_sphere(t_ray ray, t_sphere sphere)
+{
+	t_v3d	oc;
+	double	a;
+	double	b;
+	double	c;
+	double	radius;
+
+	oc = vec_sub(ray.origin, sphere.center);
+	a = vec_dot(ray.direction, ray.direction);
+	b = 2.0 * vec_dot(oc, ray.direction);
+	radius = sphere.diameter / 2.0;
+	c = vec_dot(oc, oc) - radius * radius;
+	return (quad(a, b, c));
 }
