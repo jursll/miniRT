@@ -40,6 +40,22 @@ void	add_object(char **tok, t_parsed_scene *scene, t_figure type)
 	}
 }
 
+static bool	handle_object_parsing(char **tok, t_parsed_scene *scene,
+	t_figure type, char **err)
+{
+	t_parsed_object	o_temp;
+
+	ft_bzero(&o_temp, sizeof o_temp);
+	if (type == SPHERE && !safe_parse_sphere(tok, &o_temp, err))
+		return (false);
+	else if (type == PLANE && !safe_parse_plane(tok, &o_temp, err))
+		return (false);
+	else if (type == CYLINDER && !safe_parse_cylinder(tok, &o_temp, err))
+		return (false);
+	add_object(tok, scene, type);
+	return (true);
+}
+
 bool	dispatch_tokens(char **tok, t_parsed_scene *scene, char **err)
 {
 	if (!ft_strcmp(tok[0], "A"))
@@ -49,39 +65,29 @@ bool	dispatch_tokens(char **tok, t_parsed_scene *scene, char **err)
 	else if (!ft_strcmp(tok[0], "L"))
 		return (safe_parse_light(tok, scene, err));
 	else if (!ft_strcmp(tok[0], "sp"))
-	{
-		t_parsed_object	o_temp;
-
-		ft_bzero(&o_temp, sizeof o_temp);
-		if (!safe_parse_sphere(tok, &o_temp, err))
-			return (false);
-		add_object(tok, scene, SPHERE);
-		return (true);
-	}
+		return (handle_object_parsing(tok, scene, SPHERE, err));
 	else if (!ft_strcmp(tok[0], "pl"))
-	{
-		t_parsed_object	o_temp;
-
-		ft_bzero(&o_temp, sizeof o_temp);
-		if (!safe_parse_plane(tok, &o_temp, err))
-			return (false);
-		add_object(tok, scene, PLANE);
-		return (true);
-	}
+		return (handle_object_parsing(tok, scene, PLANE, err));
 	else if (!ft_strcmp(tok[0], "cy"))
-	{
-		t_parsed_object	o_temp;
-
-		ft_bzero(&o_temp, sizeof o_temp);
-		if (!safe_parse_cylinder(tok, &o_temp, err))
-			return (false);
-		add_object(tok, scene, CYLINDER);
-		return (true);
-	}
+		return (handle_object_parsing(tok, scene, CYLINDER, err));
 	else
 	{
-		if (err) *err = "Unknown element identifier";
+		if (err)
+			*err = "Unknown element identifier";
 		return (false);
 	}
-	return (true);
+}
+
+int	open_and_init(int argc, char **argv, t_parsed_scene *scene)
+{
+	int	fd;
+
+	if (argc != 2)
+		print_error("Usage: ./miniRT <scene.rt>");
+	check_rt_extension(argv[1]);
+	fd = open(argv[1], O_RDONLY);
+	if (fd < 0)
+		print_error("Could not open scene file");
+	ft_memset(scene, 0, sizeof(*scene));
+	return (fd);
 }

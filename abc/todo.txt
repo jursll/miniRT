@@ -1,5 +1,0 @@
-TODO:
-- Finish norminette
-- Create maps (Simple + Correct folders)
-- Do we need to be able to resize the window ?
-- Check the evalutation multiple times

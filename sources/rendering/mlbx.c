@@ -66,7 +66,6 @@ int	display(t_rt *rt)
 {
 	char	info_str[256];
 
-	/* ensure buffer is initialized to avoid Valgrind stack-origin reports */
 	ft_bzero(info_str, sizeof(info_str));
 	launch_rays(rt);
 	draw_selection_info(rt);

@@ -106,11 +106,9 @@ typedef struct s_parsed_scene
 	int					num_lights;
 }				t_parsed_scene;
 
-void		parse_color(char *str, t_color *c);
-bool		safe_parse_color(char *str, t_color *c);
-bool		safe_parse_coordination(char *str, t_v3d *c);
-bool		safe_parse_vector(char *s, t_v3d *v);
-bool		safe_parse_d_h(char *s, float *out);
+bool		parse_color(char *str, t_color *c);
+void		parse_ambient(char **tokens, t_parsed_scene *scene);
+void		parse_color_or_exit(char *str, t_color *c);
 bool		check_color(char *str);
 int			is_normalized(t_v3d v);
 float		string_to_float(char *str);
@@ -125,12 +123,17 @@ void		free_arr(char **arr);
 void		free_scene_objects(t_parsed_scene *scene);
 void		cleanup_and_exit(t_parsed_scene *scene, int fd, char *error_msg);
 void		parse_light(char **tokens, t_parsed_scene *scene);
-void		parse_coordination(char *str, t_v3d *c);
+bool		parse_coordination(char *str, t_v3d *c);
+void		parse_coordination_or_exit(char *str, t_v3d *c);
+bool		parse_color(char *str, t_color *c);
+void		parse_color_or_exit(char *str, t_color *c);
 float		parse_ratio(char *s);
 void		parse_camera(char **tok, t_parsed_scene*sc);
-void		parse_vector(char *s, t_v3d *v);
+bool		parse_vector(char *s, t_v3d *v);
+void		parse_vector_or_exit(char *s, t_v3d *v);
 void		parse_plane(char **tok, t_parsed_object *o);
-float		parse_d_h(char *s);
+bool		parse_d_h(char *s, float *out);
+float		parse_d_h_or_exit(char *s);
 void		parse_sphere(char **tok, t_parsed_object *o);
 void		parse_cylinder(char **tok, t_parsed_object *o);
 int			ft_strcmp(const char *s1, const char *s2);
@@ -140,7 +143,8 @@ void		parse_scene_file(int fd, t_parsed_scene *scene);
 int			open_and_init(int argc, char **argv, t_parsed_scene *scene);
 void		normalize_whitespace(char *s);
 void		add_object(char **tok, t_parsed_scene*scene, t_figure type);
-bool		safe_parse_ambient(char **tokens, t_parsed_scene *scene, char **err);
+bool		safe_parse_ambient(char **tokens, t_parsed_scene *scene,
+				char **err);
 bool		safe_parse_light(char **tokens, t_parsed_scene *scene, char **err);
 bool		safe_parse_camera(char **tokens, t_parsed_scene *scene, char **err);
 bool		safe_parse_sphere(char **tok, t_parsed_object *o, char **err);
@@ -153,5 +157,12 @@ t_scene		build_runtime_scene_safe(const t_parsed_scene *p,
 void		init_cylinders(t_scene *dst, const t_parsed_scene *p);
 void		init_planes(t_scene *dst, const t_parsed_scene *p);
 void		init_elements(t_scene *dst, const t_parsed_scene *p);
+void		safe_init_lights(t_scene *dst, const t_parsed_scene *p,
+				t_parsed_scene *cleanup);
+void		safe_init_spheres(t_scene *dst, const t_parsed_scene *p,
+				t_parsed_scene *cleanup);
+int			count_spheres(const t_parsed_scene *p);
+void		fill_spheres(t_scene *dst, const t_parsed_scene *p);
+void		check_rt_extension(char *name);
 
 #endif

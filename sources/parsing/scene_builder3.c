@@ -61,3 +61,33 @@ void	init_cylinders(t_scene *dst, const t_parsed_scene *p)
 		print_error("Could not allocate cylinders");
 	fill_cylinders(dst, p);
 }
+
+void	safe_init_lights(t_scene *dst, const t_parsed_scene *p,
+			t_parsed_scene *cleanup)
+{
+	int	n;
+
+	n = p->has_light;
+	dst->num_lights = n;
+	if (!n)
+		return ;
+	dst->lights = malloc(sizeof * dst->lights * n);
+	if (!dst->lights)
+		cleanup_and_exit(cleanup, -1, "Could not allocate lights");
+	dst->lights[0].position = p->light.coord;
+	dst->lights[0].brightness = p->light.ratio;
+	dst->lights[0].color = p->light.color;
+}
+
+void	safe_init_spheres(t_scene *dst, const t_parsed_scene *p,
+			t_parsed_scene *cleanup)
+{
+	int	count;
+
+	count = count_spheres(p);
+	dst->num_spheres = count;
+	dst->spheres = malloc(sizeof * dst->spheres * count);
+	if (count && !dst->spheres)
+		cleanup_and_exit(cleanup, -1, "Could not allocate spheres");
+	fill_spheres(dst, p);
+}

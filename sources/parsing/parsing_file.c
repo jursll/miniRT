@@ -84,17 +84,3 @@ void	parse_scene_file(int fd, t_parsed_scene *scene)
 	}
 	close(fd);
 }
-
-int	open_and_init(int argc, char **argv, t_parsed_scene *scene)
-{
-	int	fd;
-
-	if (argc != 2)
-		print_error("Usage: ./miniRT <scene.rt>");
-	check_rt_extension(argv[1]);
-	fd = open(argv[1], O_RDONLY);
-	if (fd < 0)
-		print_error("Could not open scene file");
-	ft_memset(scene, 0, sizeof(*scene));
-	return (fd);
-}

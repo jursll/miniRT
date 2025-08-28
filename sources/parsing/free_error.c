@@ -57,4 +57,3 @@ void	cleanup_and_exit(t_parsed_scene *scene, int fd, char *error_msg)
 	printf("\033[31mError\n%s\033[30m\n", error_msg);
 	exit(EXIT_FAILURE);
 }
-

@@ -68,3 +68,17 @@ void	init_planes(t_scene *dst, const t_parsed_scene *p)
 		print_error("Could not allocate planes");
 	fill_planes(dst, p);
 }
+
+t_scene	build_runtime_scene_safe(const t_parsed_scene *p,
+			t_parsed_scene *to_cleanup)
+{
+	t_scene	dst;
+
+	dst = (t_scene){0};
+	init_elements(&dst, p);
+	safe_init_lights(&dst, p, to_cleanup);
+	safe_init_spheres(&dst, p, to_cleanup);
+	init_planes(&dst, p);
+	init_cylinders(&dst, p);
+	return (dst);
+}
