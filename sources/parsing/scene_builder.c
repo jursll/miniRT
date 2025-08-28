@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/miniRT.h"
 #include "../../include/parsing.h"
 
 static void	init_lights(t_scene *dst, const t_parsed_scene *p)

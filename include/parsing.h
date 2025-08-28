@@ -129,6 +129,10 @@ bool		parse_color(char *str, t_color *c);
 void		parse_color_or_exit(char *str, t_color *c);
 float		parse_ratio(char *s);
 void		parse_camera(char **tok, t_parsed_scene*sc);
+bool		check_light_args(char **tokens, t_parsed_scene *scene,
+				char **err);
+bool		check_camera_args(char **tok, t_parsed_scene *sc, char **err);
+bool		set_err(char **err, char *msg);
 bool		parse_vector(char *s, t_v3d *v);
 void		parse_vector_or_exit(char *s, t_v3d *v);
 void		parse_plane(char **tok, t_parsed_object *o);

@@ -24,17 +24,17 @@ void	handle_movement_key(int keycode, t_rt *rt, double move_speed)
 {
 	t_v3d	movement;
 
-	if (keycode == KEY_S)
+	if (keycode == KEY_W)
 		movement = vec(0, 0, move_speed);
-	else if (keycode == KEY_W)
+	else if (keycode == KEY_S)
 		movement = vec(0, 0, -move_speed);
-	else if (keycode == KEY_D)
-		movement = vec(-move_speed, 0, 0);
 	else if (keycode == KEY_A)
+		movement = vec(-move_speed, 0, 0);
+	else if (keycode == KEY_D)
 		movement = vec(move_speed, 0, 0);
-	else if (keycode == KEY_E)
-		movement = vec(0, move_speed, 0);
 	else if (keycode == KEY_Q)
+		movement = vec(0, move_speed, 0);
+	else if (keycode == KEY_E)
 		movement = vec(0, -move_speed, 0);
 	else
 		return ;
