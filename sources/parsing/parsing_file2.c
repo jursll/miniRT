@@ -40,21 +40,48 @@ void	add_object(char **tok, t_parsed_scene *scene, t_figure type)
 	}
 }
 
-bool	dispatch_tokens(char **tok, t_parsed_scene *scene)
+bool	dispatch_tokens(char **tok, t_parsed_scene *scene, char **err)
 {
 	if (!ft_strcmp(tok[0], "A"))
-		parse_ambient(tok, scene);
+		return (safe_parse_ambient(tok, scene, err));
 	else if (!ft_strcmp(tok[0], "C"))
-		parse_camera(tok, scene);
+		return (safe_parse_camera(tok, scene, err));
 	else if (!ft_strcmp(tok[0], "L"))
-		parse_light(tok, scene);
+		return (safe_parse_light(tok, scene, err));
 	else if (!ft_strcmp(tok[0], "sp"))
+	{
+		t_parsed_object	o_temp;
+
+		ft_bzero(&o_temp, sizeof o_temp);
+		if (!safe_parse_sphere(tok, &o_temp, err))
+			return (false);
 		add_object(tok, scene, SPHERE);
+		return (true);
+	}
 	else if (!ft_strcmp(tok[0], "pl"))
+	{
+		t_parsed_object	o_temp;
+
+		ft_bzero(&o_temp, sizeof o_temp);
+		if (!safe_parse_plane(tok, &o_temp, err))
+			return (false);
 		add_object(tok, scene, PLANE);
+		return (true);
+	}
 	else if (!ft_strcmp(tok[0], "cy"))
+	{
+		t_parsed_object	o_temp;
+
+		ft_bzero(&o_temp, sizeof o_temp);
+		if (!safe_parse_cylinder(tok, &o_temp, err))
+			return (false);
 		add_object(tok, scene, CYLINDER);
+		return (true);
+	}
 	else
+	{
+		if (err) *err = "Unknown element identifier";
 		return (false);
+	}
 	return (true);
 }

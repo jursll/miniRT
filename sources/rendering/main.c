@@ -42,7 +42,7 @@ int	main(int argc, char **argv)
 	}
 	fd = open_and_init(argc, argv, &ps);
 	parse_scene_file(fd, &ps);
-	validate_scene(&ps);
+	validate_scene_with_cleanup(&ps);
 	rt.scene = build_runtime_scene(&ps);
 	free_scene_objects(&ps);
 	init_selection(&rt);

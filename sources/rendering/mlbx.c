@@ -25,7 +25,7 @@ void	make_window(t_rt *rt)
 {
 	t_mlbx	*mlbx;
 
-	mlbx = malloc(sizeof(t_mlbx));
+	mlbx = ft_calloc(1, sizeof(t_mlbx));
 	rt->mlbx = mlbx;
 	rt->mlbx->mlx = mlx_init();
 	rt->mlbx->mlx_win = mlx_new_window(mlbx->mlx, WIN_W, WIN_H, "MiniRT");
@@ -41,10 +41,22 @@ void	make_window(t_rt *rt)
 
 int	destroy(t_rt *rt)
 {
-	mlx_destroy_window(rt->mlbx->mlx, rt->mlbx->mlx_win);
-	mlx_destroy_image(rt->mlbx->mlx, rt->mlbx->img.img);
-	mlx_destroy_display(rt->mlbx->mlx);
-	free(rt->mlbx->mlx);
+	if (!rt)
+		exit(0);
+	if (rt->mlbx)
+	{
+		if (rt->mlbx->mlx)
+		{
+			if (rt->mlbx->mlx_win)
+				mlx_destroy_window(rt->mlbx->mlx, rt->mlbx->mlx_win);
+			if (rt->mlbx->img.img)
+				mlx_destroy_image(rt->mlbx->mlx, rt->mlbx->img.img);
+			mlx_destroy_display(rt->mlbx->mlx);
+			free(rt->mlbx->mlx);
+		}
+		free(rt->mlbx);
+		rt->mlbx = NULL;
+	}
 	free_rt(rt);
 	exit(0);
 	return (0);
@@ -54,6 +66,8 @@ int	display(t_rt *rt)
 {
 	char	info_str[256];
 
+	/* ensure buffer is initialized to avoid Valgrind stack-origin reports */
+	ft_bzero(info_str, sizeof(info_str));
 	launch_rays(rt);
 	draw_selection_info(rt);
 	mlx_put_image_to_window(rt->mlbx->mlx, rt->mlbx->mlx_win,

@@ -31,19 +31,38 @@ void	validate_scene(t_parsed_scene *scene)
 		print_error("Missing point light (L)");
 }
 
-static void	handle_line(char *trimmed, t_parsed_scene *scene)
+void	validate_scene_with_cleanup(t_parsed_scene *scene)
+{
+	if (!scene->has_ambient)
+		cleanup_and_exit(scene, -1, "Missing ambient light (A)");
+	if (!scene->has_camera)
+		cleanup_and_exit(scene, -1, "Missing camera (C)");
+	if (!scene->has_light)
+		cleanup_and_exit(scene, -1, "Missing point light (L)");
+}
+
+static bool	handle_line(char *trimmed, t_parsed_scene *scene, int fd)
 {
 	char	**tokens;
-	bool	ok;
+	char	*err;
+	bool	success;
 
 	tokens = ft_split(trimmed, ' ');
 	free (trimmed);
 	if (!tokens)
-		print_error("Malloc failed on split");
-	ok = dispatch_tokens(tokens, scene);
+		cleanup_and_exit(scene, fd, "Malloc failed on split");
+	err = NULL;
+	success = dispatch_tokens(tokens, scene, &err);
+	if (!success)
+	{
+		free_arr(tokens);
+		if (err)
+			cleanup_and_exit(scene, fd, err);
+		else
+			cleanup_and_exit(scene, fd, "Unknown element identifier");
+	}
 	free_arr(tokens);
-	if (!ok)
-		print_error("Unknown element identifier");
+	return (true);
 }
 
 void	parse_scene_file(int fd, t_parsed_scene *scene)
@@ -58,7 +77,7 @@ void	parse_scene_file(int fd, t_parsed_scene *scene)
 		free (line);
 		normalize_whitespace(trimmed);
 		if (*trimmed && *trimmed != '#')
-			handle_line(trimmed, scene);
+			handle_line(trimmed, scene, fd);
 		else
 			free(trimmed);
 		line = get_next_line(fd);

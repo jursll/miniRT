@@ -83,7 +83,10 @@ void	parse_coordination(char *str, t_v3d *c)
 	while (i < 3)
 	{
 		if (!is_a_valid_float(parts[i]))
+		{
+			free_arr(parts);
 			print_error("Numbers must be a float");
+		}
 		if (i == 0)
 			c->x = string_to_float(parts[i]);
 		else if (i == 1)
@@ -109,7 +112,10 @@ void	parse_color(char *str, t_color *c)
 	while (i < 3)
 	{
 		if (!check_color(parts[i]))
+		{
+			free_arr(parts);
 			print_error("Color components must be digits in [0,255]");
+		}
 		if (i == 0)
 			c->r = ft_atoi(parts[i]);
 		else if (i == 1)
@@ -130,4 +136,118 @@ void	parse_vector(char *s, t_v3d *v)
 		print_error("Vector components must be in [-1,1]");
 	if (v->x == 0.0f && v->y == 0.0f && v->z == 0.0f)
 		print_error("Zero vector is not a valid direction");
+}
+
+float	parse_d_h(char *s)
+{
+	char	**parts;
+	float	d;
+
+	parts = ft_split(s, ',');
+	if (counter(parts) != 1)
+	{
+		free_arr(parts);
+		print_error("Only one argument needed");
+	}
+	free_arr(parts);
+	if (!is_a_valid_float(s))
+		print_error("Must be a valid number");
+	d = string_to_float(s);
+	if (d <= 0.0f)
+		print_error("Must be greater than 0");
+	return (d);
+}
+
+bool	safe_parse_coordination(char *str, t_v3d *c)
+{
+	char	**parts;
+	int		i;
+
+	if (!validate_commas(str, ',', 2))
+		return (false);
+	parts = ft_split(str, ',');
+	if (!parts)
+		return (false);
+	i = 0;
+	while (i < 3)
+	{
+		if (!is_a_valid_float(parts[i]))
+		{
+			free_arr(parts);
+			return (false);
+		}
+		if (i == 0)
+			c->x = string_to_float(parts[i]);
+		else if (i == 1)
+			c->y = string_to_float(parts[i]);
+		else
+			c->z = string_to_float(parts[i]);
+		i++;
+	}
+	free_arr(parts);
+	return (true);
+}
+
+bool	safe_parse_color(char *str, t_color *c)
+{
+	char	**parts;
+	int		i;
+
+	if (!validate_commas(str, ',', 2))
+		return (false);
+	parts = ft_split(str, ',');
+	if (!parts)
+		return (false);
+	i = 0;
+	while (i < 3)
+	{
+		if (!check_color(parts[i]))
+		{
+			free_arr(parts);
+			return (false);
+		}
+		if (i == 0)
+			c->r = ft_atoi(parts[i]);
+		else if (i == 1)
+			c->g = ft_atoi(parts[i]);
+		else
+			c->b = ft_atoi(parts[i]);
+		i++;
+	}
+	free_arr(parts);
+	return (true);
+}
+
+bool	safe_parse_vector(char *s, t_v3d *v)
+{
+	if (!safe_parse_coordination(s, v))
+		return (false);
+	if (v->x < -1.0f || v->x > 1.0f
+		|| v->y < -1.0f || v->y > 1.0f
+		|| v->z < -1.0f || v->z > 1.0f)
+		return (false);
+	if (v->x == 0.0f && v->y == 0.0f && v->z == 0.0f)
+		return (false);
+	return (true);
+}
+
+bool	safe_parse_d_h(char *s, float *out)
+{
+	char	**parts;
+
+	parts = ft_split(s, ',');
+	if (!parts)
+		return (false);
+	if (counter(parts) != 1)
+	{
+		free_arr(parts);
+		return (false);
+	}
+	free_arr(parts);
+	if (!is_a_valid_float(s))
+		return (false);
+	*out = string_to_float(s);
+	if (*out <= 0.0f)
+		return (false);
+	return (true);
 }
