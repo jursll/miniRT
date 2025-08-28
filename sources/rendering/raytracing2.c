@@ -6,11 +6,11 @@
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 15:21:38 by julrusse          #+#    #+#             */
-/*   Updated: 2025/08/06 15:36:54 by julrusse         ###   ########.fr       */
+/*   Updated: 2025/08/28 14:56:35 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/miniRT.h"
+#include "../../include/miniRT.h"
 
 t_color	calculate_lighting(t_rt *rt, t_hit *hit)
 {

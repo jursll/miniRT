@@ -6,11 +6,11 @@
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:13:45 by julrusse          #+#    #+#             */
-/*   Updated: 2025/08/06 15:36:47 by julrusse         ###   ########.fr       */
+/*   Updated: 2025/08/28 14:56:32 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/miniRT.h"
+#include "../../include/miniRT.h"
 
 /* Calculate hit point from ray and distance */
 t_v3d	ray_at(t_ray ray, double t)

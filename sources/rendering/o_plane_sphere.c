@@ -6,11 +6,11 @@
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:50:33 by julrusse          #+#    #+#             */
-/*   Updated: 2025/08/06 15:57:15 by julrusse         ###   ########.fr       */
+/*   Updated: 2025/08/28 14:56:30 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/miniRT.h"
+#include "../../include/miniRT.h"
 
 double	intersect_plane(t_ray ray, t_plane plane)
 {

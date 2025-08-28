@@ -6,11 +6,11 @@
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 10:27:18 by julrusse          #+#    #+#             */
-/*   Updated: 2025/08/07 09:55:15 by julrusse         ###   ########.fr       */
+/*   Updated: 2025/08/28 14:56:38 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/miniRT.h"
+#include "../../include/miniRT.h"
 
 void	init_selection(t_rt *rt)
 {

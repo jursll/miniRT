@@ -6,11 +6,11 @@
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 16:18:06 by julrusse          #+#    #+#             */
-/*   Updated: 2025/08/07 10:11:10 by julrusse         ###   ########.fr       */
+/*   Updated: 2025/08/28 14:56:40 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/miniRT.h"
+#include "../../include/miniRT.h"
 
 t_selection	get_selection_at_index(t_rt *rt, int sel_index)
 {

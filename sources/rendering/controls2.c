@@ -6,11 +6,11 @@
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 17:22:07 by julrusse          #+#    #+#             */
-/*   Updated: 2025/07/31 18:09:18 by julrusse         ###   ########.fr       */
+/*   Updated: 2025/08/28 14:55:32 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/miniRT.h"
+#include "../../include/miniRT.h"
 
 void	handle_selection_key(int keycode, t_rt *rt)
 {

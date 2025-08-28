@@ -6,11 +6,11 @@
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 09:03:48 by julrusse          #+#    #+#             */
-/*   Updated: 2025/07/03 10:37:29 by julrusse         ###   ########.fr       */
+/*   Updated: 2025/08/28 14:55:52 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/miniRT.h"
+#include "../../../include/miniRT.h"
 
 t_v3d	vec(double x, double y, double z)
 {

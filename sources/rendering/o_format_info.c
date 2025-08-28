@@ -6,11 +6,11 @@
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 09:40:10 by julrusse          #+#    #+#             */
-/*   Updated: 2025/08/07 09:41:54 by julrusse         ###   ########.fr       */
+/*   Updated: 2025/08/28 14:56:27 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/miniRT.h"
+#include "../../include/miniRT.h"
 
 void	format_camera_info(t_rt *rt, char *info_str)
 {

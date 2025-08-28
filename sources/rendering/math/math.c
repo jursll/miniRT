@@ -6,11 +6,11 @@
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/26 16:58:46 by julrusse          #+#    #+#             */
-/*   Updated: 2025/06/26 16:58:57 by julrusse         ###   ########.fr       */
+/*   Updated: 2025/08/28 14:55:37 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/miniRT.h"
+#include "../../../include/miniRT.h"
 
 /* calculates a quadratic equation and returns the result with
 	the first intersection only in case of 2 intersections

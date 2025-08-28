@@ -6,11 +6,11 @@
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/03 12:38:12 by julrusse          #+#    #+#             */
-/*   Updated: 2025/07/31 17:00:05 by julrusse         ###   ########.fr       */
+/*   Updated: 2025/08/28 14:55:41 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/miniRT.h"
+#include "../../../include/miniRT.h"
 
 t_v3d	add(t_v3d a, t_v3d b)
 {

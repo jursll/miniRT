@@ -6,11 +6,11 @@
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 18:15:32 by julrusse          #+#    #+#             */
-/*   Updated: 2025/08/06 15:55:48 by julrusse         ###   ########.fr       */
+/*   Updated: 2025/08/28 14:56:22 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/miniRT.h"
+#include "../../include/miniRT.h"
 
 double	try_cylinder_hit(t_ray ray, t_cylinder cyl, double *discriminant)
 {

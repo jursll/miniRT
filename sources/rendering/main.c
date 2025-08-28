@@ -6,12 +6,12 @@
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 13:32:25 by julrusse          #+#    #+#             */
-/*   Updated: 2025/08/08 12:24:47 by julrusse         ###   ########.fr       */
+/*   Updated: 2025/08/28 14:56:08 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/miniRT.h"
-#include "../include/parsing.h"
+#include "../../include/miniRT.h"
+#include "../../include/parsing.h"
 
 void	free_rt(t_rt *rt)
 {

@@ -6,11 +6,11 @@
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 16:33:35 by julrusse          #+#    #+#             */
-/*   Updated: 2025/07/31 17:07:34 by julrusse         ###   ########.fr       */
+/*   Updated: 2025/08/28 14:55:26 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/miniRT.h"
+#include "../../include/miniRT.h"
 
 /* Compute camera vectors once per frame */
 t_camera_cache	precompute_camera(t_camera cam)

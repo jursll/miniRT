@@ -6,11 +6,11 @@
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 09:37:53 by julrusse          #+#    #+#             */
-/*   Updated: 2025/08/07 10:10:33 by julrusse         ###   ########.fr       */
+/*   Updated: 2025/08/28 14:56:46 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/miniRT.h"
+#include "../../include/miniRT.h"
 
 char	*ft_strcpy(char *dest, const char *src)
 {

@@ -6,11 +6,11 @@
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 16:30:14 by julrusse          #+#    #+#             */
-/*   Updated: 2025/07/04 16:31:18 by julrusse         ###   ########.fr       */
+/*   Updated: 2025/08/28 14:55:48 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/miniRT.h"
+#include "../../../include/miniRT.h"
 
 /* Normalizes a vector (makes its length = 1) */
 t_v3d	normalize_vector(t_v3d v)

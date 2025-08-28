@@ -6,11 +6,11 @@
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 16:13:30 by julrusse          #+#    #+#             */
-/*   Updated: 2025/08/06 16:15:50 by julrusse         ###   ########.fr       */
+/*   Updated: 2025/08/28 14:56:16 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/miniRT.h"
+#include "../../include/miniRT.h"
 
 void	move_selected_object(t_rt *rt, t_v3d movement)
 {

@@ -6,11 +6,11 @@
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 10:24:23 by julrusse          #+#    #+#             */
-/*   Updated: 2025/08/06 15:55:36 by julrusse         ###   ########.fr       */
+/*   Updated: 2025/08/28 14:56:19 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/miniRT.h"
+#include "../../include/miniRT.h"
 
 int	within_height(t_v3d point, t_cylinder cyl)
 {

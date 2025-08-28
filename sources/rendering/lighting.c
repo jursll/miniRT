@@ -6,11 +6,11 @@
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 10:53:52 by julrusse          #+#    #+#             */
-/*   Updated: 2025/07/31 18:26:52 by julrusse         ###   ########.fr       */
+/*   Updated: 2025/08/28 14:55:59 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/miniRT.h"
+#include "../../include/miniRT.h"
 
 /* Normal = normalized(point - center) */
 t_v3d	sphere_normal(t_v3d point, t_sphere sphere)

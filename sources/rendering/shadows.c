@@ -6,11 +6,11 @@
 /*   By: julrusse <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 15:25:13 by julrusse          #+#    #+#             */
-/*   Updated: 2025/08/07 09:58:57 by julrusse         ###   ########.fr       */
+/*   Updated: 2025/08/28 14:56:43 by julrusse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/miniRT.h"
+#include "../../include/miniRT.h"
 
 void	init_shadow_ray(t_ray *ray, t_v3d point, t_v3d light_pos,
 			double *light_distance)
